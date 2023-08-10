@@ -1,0 +1,100 @@
+{% load static %}
+
+<aside class="topics">
+    <div class="toggleee"></div>
+    <div class="topics__header">
+        <h2>Specifications</h2>
+    </div>
+
+    <a href="{% url 'items' %}">All</a>
+
+    <form method="GET" style="width: 100%; gap: 1.5rem;" class="d-flex flex-column" id="form">
+
+        <div>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#type" aria-controls="type" aria-expanded="false" aria-label="Toggle type">
+                <span>Type</span>
+            </button>
+            <div class="collapse navbar-collapse" id="type">
+                {% for type in types %}
+                    <div class="mb-3" style="display: flex; ">
+                        <input type="checkbox" class="form-check-input" name="type" value="{{ type.id }}" id="{{ type }}">
+                        <label for="{{ type }}" class="form-check-label container-fluid">{{ type }}</label>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#cpu" aria-controls="cpu" aria-expanded="false" aria-label="Toggle cpu">
+                <span>CPU</span>
+            </button>
+            <div class="collapse navbar-collapse" id="cpu">
+                {% for cpu in cpus %}
+                    <div class="mb-3" style="display: flex; ">
+                        <input type="checkbox" class="form-check-input" name="cpu" value="{{ cpu.id }}" id="{{ cpu }}">
+                        <label for="{{ cpu }}" class="form-check-label container-fluid">{{ cpu }}</label>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#cpu_type" aria-controls="cpu_type" aria-expanded="false" aria-label="Toggle cpu_type">
+                <span>CPU Type</span>
+            </button>
+            <div class="collapse navbar-collapse" id="cpu_type">
+                select cpu
+            </div>
+        </div>
+
+        <div>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#ram_type" aria-controls="ram_type" aria-expanded="false" aria-label="Toggle ram_type">
+                <span>Ram</span>
+            </button>
+            <div class="collapse navbar-collapse" id="ram_type">
+                {% for ram_type in ram_types %}
+                    <div class="mb-3" style="display: flex; ">
+                        <input type="checkbox" class="form-check-input" name="ram_type" value="{{ ram_type.id }}" id="{{ ram_type }}">
+                        <label for="{{ ram_type }}" class="form-check-label container-fluid">{{ ram_type }}</label>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#hdd_type" aria-controls="hdd_type" aria-expanded="false" aria-label="Toggle hdd_type">
+                <span>HDD</span>
+            </button>
+            <div class="collapse navbar-collapse" id="hdd_type">
+                {% for hdd_type in hdd_types %}
+                    <div class="mb-3" style="display: flex; ">
+                        <input type="checkbox" class="form-check-input" name="hdd_type" value="{{ hdd_type.id }}" id="{{ hdd_type }}">
+                        <label for="{{ hdd_type }}" class="form-check-label container-fluid">{{ hdd_type }}</label>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#gpu_type" aria-controls="gpu_type" aria-expanded="false" aria-label="Toggle gpu_type">
+                <span>GPU</span>
+            </button>
+            <div class="collapse navbar-collapse" id="gpu_type">
+                {% for gpu in gpus %}
+                    <div class="mb-3" style="display: flex; ">
+                        <input type="checkbox" class="form-check-input" name="gpu" value="{{ gpu.id }}" id="{{ gpu }}">
+                        <label for="{{ gpu }}" class="form-check-label container-fluid">{{ gpu }}</label>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- <input class="btn btn-primary" type="submit" value="Apply Filter"> -->
+        <button class="btn btn-primary" type="submit" >
+            <span class="spinner-border-hidden  spinner-border-sm" aria-hidden="true"></span>
+            Apply Filter
+        </button>
+    </form>
+
+    <script src="{% static 'js/sidebar.js' %}"></script>
+</aside>

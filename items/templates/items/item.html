@@ -1,0 +1,85 @@
+{% extends 'main.html' %}
+
+{% load static %}
+
+{% block content %}
+    <div class="container d-flex">
+        <div class="slider">
+            <img class="img" src="{{ item.model.images.all.0.image.url }}" alt="Faild to load picture..." />
+            <div class="links">
+                {% for img in item.model.images.all %}
+                    <img class="aaa"
+                    src="{{ img.image.url }}"
+                    alt="Faild to load picture..."
+                    
+                    />
+                {% endfor %}
+            </div>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <td colSpan="2">
+                        <h1>{{ item.model.manufacturer }}</h1>
+                    </td>
+                </tr>
+            </thead>
+            <tbody>
+                    <tr>
+                        <td>Model: </td>
+                        <td>{{ item.model }}</td>
+                    </tr>
+                    <tr>
+                        <td>CPU: </td>
+                        <td>{{ item.cpu_type }}</td>
+                    </tr>
+                    <tr>
+                        <td>CPU Speed: </td>
+                        <td>{{ item.cpu_speed }}-GHZ</td>
+                    </tr>
+                    <tr>
+                        <td>Ram: </td>
+                        <td>{{ item.ram_cache }}GB-{{ item.ram_type }}</td>
+                    </tr>
+                    <tr>
+                        <td>HDD: </td>
+                        <td> {{item.hdd_size }}GB-{{ item.hdd_type }}</td>
+                    </tr>
+                    <tr>
+                        <td>GPU: </td>
+                        <td>{{ item.gpu }}</td>
+                    </tr>
+                    <tr>
+                        <td>Screen Resolution: </td>
+                        <td>{{ item.screen_resolution }}</td>
+                    </tr>
+                    <tr>
+                        <td>Screen Size: </td>
+                        <td>{{ item.screen_size }}-Inch</td>
+                    </tr>
+                    <tr>
+                        <td>Touch Screen: </td>
+                        <td>{% if item.touch_screen %} Y {% else %} N {% endif %}</td>
+                    </tr>
+                    <tr>
+                        <td>Rotation: </td>
+                        <td>{{ item.rotation }}</td>
+                    </tr>
+                    <tr>
+                        <td>Illuminated Keyboard: </td>
+                        <td>{% if item.illuminated_keyboard %} Y {% else %} N {% endif %}</td>
+                    </tr>
+                    <tr>
+                        <td>Sound Type: </td>
+                        <td>{{ item.sound_type }}</td>
+                    </tr>
+                    <tr>
+                        <td>Original Windows: </td>
+                        <td>{% if item.original_windows %} Y {% else %} N {% endif %}</td>
+                    </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script src="{% static 'js/item.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,345 @@
+/*==============================
+=>  Main
+================================*/
+
+:root {
+    --color-main: #71c6dd;
+    --color-main-light: #e1f6fb;
+    --color-dark: #3f4156;
+    --color-dark-medium: #51546e;
+    --color-dark-light: #696d97;
+    --color-light: #e5e5e5;
+    --color-gray: #8b8b8b;
+    --color-light-gray: #b2bdbd;
+    --color-bg: #2d2d39;
+    --color-success: #5dd693;
+    --color-error: #fc4b0b;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: var(--color-dark);
+    margin: 0;
+    padding: 0;
+}
+
+.footer {
+    width: 100%;
+    margin: 1rem auto auto 0;
+    padding: .5rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    background-color: var(--color-dark-light);
+    color: var(--color-main-light);
+}
+
+.footer p {
+    display: flex;
+    /* flex-direction: column; */
+}
+
+.footer p small {
+    font-style: italic;
+}
+
+/*==============================
+=>  Header
+================================*/
+
+.custom {
+    box-shadow: 1px 2px 1rem rgba(0, 0, 0, 0.25);
+}
+
+.custom a {
+    /* color: #FFF; */
+}
+
+.user {
+    display: flex;
+}
+
+.user img {
+    width: 2rem;
+}
+
+/*==============================
+=>  Home
+================================*/
+
+.wrapper {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 5fr;
+}
+
+.card-img-top {
+    height: 16vw;
+    min-height: 14rem;
+    object-fit: cover;
+}
+
+.col  .card-link {
+    /* background-color: red; */
+    color: black;
+    text-decoration: none;
+}
+
+.btn-primary {
+    margin: .5rem 0 0 0;
+}
+
+.card {
+    padding: .1rem .2rem;
+    box-shadow: 1px 1px .5rem rgba(0, 0, 0, .25);
+    margin: .3rem auto;
+    transition: .5s;
+    cursor: pointer;
+}
+
+.card:hover {
+    transform: scale(98%, 98%);
+}
+
+.row {
+    margin: 0 auto;
+}
+
+small {
+    text-transform: uppercase;
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.filter {
+    display: flex;
+    align-items: center;
+}
+
+form {
+    width: 50%;
+    margin: 0 auto;
+    text-align: center;
+}
+
+form input {
+    width: 100%;
+    text-align: center;
+    border: none;
+    border-bottom: 1px solid gray;
+}
+
+/*==============================
+=>  Item
+================================*/
+
+.slider {
+    position: relative;
+    width: 65%;
+    margin: auto auto;
+}
+
+@media (max-width: 970px) {
+    .container {
+        flex-direction: column;
+    }
+    
+    .slider {
+        width: 100%;
+    }
+}
+
+.slider .img {
+    width: 100%;
+    max-height: 90vh;
+    object-fit: cover;
+    box-shadow: 3px 3px 8px rgba(0, 0, 0, .25);
+}
+
+.slider .leftArrow, .slider .rightArrow {
+    content: "";
+      /* background: red; */
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 2rem solid blue;
+    border-color: transparent blue transparent transparent;
+    border-radius: 20%;
+    cursor: pointer;
+    opacity: .6;
+}
+
+.slider .leftArrow:hover, .slider .rightArrow:hover {
+    opacity: 1;
+}
+
+.slider .leftArrow {
+    border-color: transparent rgb(129, 129, 129) transparent transparent;
+    left: 0;
+}
+
+.slider .rightArrow {
+    border-color: transparent transparent transparent rgb(129, 129, 129);
+    right: 0;
+}
+
+.slider .links {
+    /* width: 100%; */
+    height: 3.5rem;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+.slider .links img {
+    min-width: 5rem;
+    padding: .5rem .5rem;
+    object-fit: cover;
+    cursor: pointer;
+}
+
+.table {
+    width: 50%;
+    height: 100%;
+    margin: auto .5rem;
+    box-shadow: 1px 1px .3rem rgba(97, 94, 94, 0.25);
+}
+
+@media (max-width: 970px) {
+    .table {
+        margin-top: 5rem;
+        margin-left: 0;
+        width: 100%;
+    }
+}
+
+.table thead tr td h1 {
+    padding-left: 1rem;
+}
+
+.table thead {
+    background-color: rgb(247, 247, 247);
+    text-transform: uppercase;
+}
+
+.table tbody tr:nth-child(odd) {
+    background-color: rgb(226, 225, 225);
+}
+
+.table tbody tr:nth-child(even) {
+    background-color: rgb(247, 247, 247);
+}
+
+.table tbody tr td:nth-child(2) {
+    text-transform: uppercase;
+}
+
+
+/*==============================
+=>  sidebar
+================================*/
+
+.topics {
+    position: relative;
+    padding: .5rem 1rem;
+    border-radius: .5rem;
+    transition: .5s;
+    color: #fff;
+    text-transform: capitalize;
+}
+
+.topics form div button {
+    color: #fff;
+}
+
+.toggleee::after {
+    position: absolute;
+    right: -1.5rem;
+    content: '';
+    display: none;
+    border: 1rem solid black;
+    border-color: transparent transparent transparent black;
+    cursor: pointer;
+    z-index: 3;
+}
+
+@media (max-width: 970px) {
+    .topics {
+        position: absolute;
+        left: -215px;
+    }
+
+    .toggleee::after {
+        display: inline-block;
+        
+    }
+    
+    .topics.active .toggleee::after {
+        border-color: transparent black transparent transparent;
+        right: 1.5rem;
+    }
+
+    .topics.active {
+        position: relative;
+        left: 0;
+        background-color: var(--color-dark-light);
+        z-index: 2;
+    }
+
+    .topics.active + .container {
+        position: absolute;
+        left: -100%;
+    }
+
+    .wrapper {
+        grid-template-columns: 1fr;
+    }
+}
+
+.topics__header {
+    margin-bottom: 2rem;
+}
+
+.topics__header h2 {
+    text-transform: uppercase;
+    font-weight: 500;
+    font-size: 1.5rem;
+    color: var(--color-dark-light);
+}
+
+.topics__list {
+    list-style: none;
+}
+
+.navbar-toggler span::after {
+    position: absolute;
+    content: '';
+    border: .5rem solid;
+    border-color: black transparent transparent transparent;
+}
+
+/* .topics-page a:hover {
+text-decoration: underline;
+}
+
+.topics-page .topics__list li:not(:last-child) a {
+margin: 2rem 0;
+padding-bottom: 1rem;
+text-decoration: none;
+border-bottom: 1px solid var(--color-dark-medium);
+}
+
+.topics-page .header__search {
+display: block;
+} */
+
+@media screen and (max-width: 500px) {
+    .mobile-menu .header__search {
+        display: block;
+        margin-bottom: 2.4rem;
+    }
+}

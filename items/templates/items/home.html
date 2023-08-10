@@ -1,0 +1,41 @@
+{% extends 'main.html' %} 
+
+{% block content %}
+    <div class="wrapper">
+        {% include 'sidebar.html' %}
+
+        <div class="container">
+            <div class="row">
+                {% for item in items %}
+                    <div class="col">
+                        <a href="{% url 'item' item.id %}" class="card-link">
+                            <div class="card" style="width: 18rem">
+                                <img src="{{ item.model.images.all.0.image.url }}" class="card-img-top" alt="..." />
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ item.model }}</h5>
+                                    <p class="card-text">
+                                        <small title="{{ item.cpu }}">CPU: {{ item.cpu_type.name }} {{ item.cpu_type }}</small>
+                                        <small title="{{ item.ram }}">Ram: {{ item.ram_cache }}GB-{{ item.ram_type }}</small>
+                                        <small title="{{ item.hdd }}">HDD: {{ item.hdd_size }}{% if item.hdd_size > 20 %}GB{%  else %}TB{%endif%}-{{ item.hdd_type }}</small>
+                                        <small title="{{ item.gpu }}">GPU: {{ item.gpu }}</small>
+                                    </p>
+                                    <a href="{% url 'item' item.id %}" class="btn btn-primary">More Info</a>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+            <span class="step-links container-fluid d-flex justify-content-around">
+                {% if page_num.has_previous %}
+                    <a href="?p={{ page_num.previous_page_number }}{% if filter %}&f={{ filter }}{% endif %}">&laquo; previous</a>
+                {% endif %}
+        
+                {% if page_num.has_next %}
+                    <a href="?p={{ page_num.next_page_number }}{% if filter %}&f={{ filter }}{% endif %}">next &raquo;</a>
+                {% endif %}
+            </span>
+        </div>
+    </div>
+
+{% endblock %}

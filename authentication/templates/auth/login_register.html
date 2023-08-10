@@ -1,0 +1,21 @@
+{% extends 'main.html' %}
+
+{% block content %}
+
+  <div class="container" style="min-height: 100vh;">
+    <form action="" method="POST">
+      {% csrf_token %}
+      <div class="mb-2">
+          <input type="text" class="form-control" name="username" id="i-1" placeholder="Username">
+      </div>
+      <div class="mb-4">
+          <input type="password" class="form-control" name="password" id="i-2" placeholder="Password">
+      </div>
+
+      <div>
+          <input type="submit" class="btn btn-success" value="Login">
+      </div>
+    </form>
+  </div>
+
+{% endblock %}

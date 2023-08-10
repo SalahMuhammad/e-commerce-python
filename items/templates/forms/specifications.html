@@ -1,0 +1,61 @@
+{% extends 'main.html' %}
+
+{% block content %}
+
+    <div class="container">
+        <form method="POST" action="">
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label for="i-1" class="form-label">Screen Resolution</label>
+                <input type="text" class="form-control" name="screen_resolution" id="i-1" placeholder="Screen Resolution" list="screen_resolution">
+                <datalist id="screen_resolution">
+                    {% for screen_resolution in screen_resolutions %}
+                        <option value="{{ screen_resolution }}"/>
+                    {% endfor %}
+                </datalist>
+            </div>
+
+            <div class="mb-3">
+                <label for="i-7" class="form-label">Screen Size</label>
+                <input type="text" class="form-control" name="screen_size" id="i-7" placeholder="Screen Size">
+            </div>
+
+            <div class="mb-3">
+                <label for="i-2" class="form-label">Sound Type</label>
+                <input type="text" class="form-control" name="sound_type" id="i-2" placeholder="Sound Type" list="sound_type">
+                <datalist id="sound_type">
+                    {% for sound_type in sound_types %}
+                        <option value="{{ sound_type }}"/>
+                    {% endfor %}
+                </datalist>
+            </div>
+
+            <div class="mb-3">
+                <label for="i-4" class="form-label">Rotation</label>
+                <input type="text" maxlength="3" class="form-control" name="rotation" id="i-4" placeholder="Rotation">
+            </div>
+
+            <div class="mb-3">
+                <input type="checkbox" class="form-check-input" name="touch_screen" id="i-3" placeholder="Touch Screen">
+                <label for="i-3" class="form-check-label">Touch Screen</label>
+            </div>
+
+            <div class="mb-3">
+                <input type="checkbox" class="form-check-input" name="illuminated_keyboard" id="i-5" placeholder="Illuminated Keyboard">
+                <label for="i-5" class="form-check-label">Illuminated Keyboard</label>
+            </div>
+
+            <div class="mb-3">
+                <input type="checkbox" class="form-check-input" name="original_windows" id="i-6" placeholder="Original Windows">
+                <label for="i-6" class="form-check-label">Original Windows</label>
+            </div>
+
+            <div class="mb-3">
+                <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-secondary">Cancel</a>
+                <input type="submit" class="btn btn-success" id="i-4" value="Submit">
+            </div>
+        </form>
+    </div>
+
+{% endblock %}
