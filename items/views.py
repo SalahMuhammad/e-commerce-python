@@ -49,44 +49,44 @@ def item(req, id):
     return render(req, 'items/item.html', context)
 
 
-# class Model(View):
-#     model = Model
-#     template_name = 'forms/model.html'
+class Model(View):
+    model = Model
+    template_name = 'forms/model.html'
 
-#     @method_decorator(login_required)
-#     def get(self, req, *args, **kwargs):
-#         manufacturers = Manufacturer.objects.all()
-#         types = Type.objects.all()
+    @method_decorator(login_required)
+    def get(self, req, *args, **kwargs):
+        manufacturers = Manufacturer.objects.all()
+        types = Type.objects.all()
 
-#         ctx = {'manufacturers': manufacturers, 'types': types}
-#         return render(req, self.template_name, ctx)
+        ctx = {'manufacturers': manufacturers, 'types': types}
+        return render(req, self.template_name, ctx)
 
-#     @method_decorator(login_required)
-#     def post(self, req, *args, **kwargs):
-#         manufacturer, created = Manufacturer.objects.get_or_create(
-#             name=req.POST.get('manufacturer').lower().strip())
-#         typee, created = Type.objects.get_or_create(
-#             name=req.POST.get('type').lower().strip())
-#         model = req.POST.get('model').lower().strip()
-#         note = req.POST.get('note').lower().strip()
-#         images = req.FILES.getlist('images')
+    @method_decorator(login_required)
+    def post(self, req, *args, **kwargs):
+        manufacturer, created = Manufacturer.objects.get_or_create(
+            name=req.POST.get('manufacturer').lower().strip())
+        typee, created = Type.objects.get_or_create(
+            name=req.POST.get('type').lower().strip())
+        model = req.POST.get('model').lower().strip()
+        note = req.POST.get('note').lower().strip()
+        images = req.FILES.getlist('images')
 
-#         try:
-#             model = self.model.objects.create(
-#                 manufacturer=manufacturer,
-#                 typee=typee,
-#                 name=model,
-#                 note=note,
-#             )
+        try:
+            model = self.model.objects.create(
+                manufacturer=manufacturer,
+                typee=typee,
+                name=model,
+                note=note,
+            )
 
-#             for image in images:
-#                 model.images.add(
-#                     Image.objects.create(image=image)
-#                 )
-#         except IntegrityError:
-#             messages.error(req, 'This model is already exists')
+            for image in images:
+                model.images.add(
+                    Image.objects.create(image=image)
+                )
+        except IntegrityError:
+            messages.error(req, 'This model is already exists')
 
-#         return render(req, self.template_name)
+        return render(req, self.template_name)
 
 
 @login_required(login_url='/auth')
