@@ -5,7 +5,11 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
-from items import views
+# from items import views
+# from django.conf.urls import handler404, handler500
+
+
+# handler404 = views.handler404
 
 # router = routers.DefaultRouter()
 # router.register(r'items', views.ItemsView, 'item')

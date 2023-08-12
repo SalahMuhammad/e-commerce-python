@@ -104,7 +104,7 @@ body {
     margin: 0 auto;
 }
 
-small {
+small, .card-title {
     text-transform: uppercase;
     display: block;
     overflow: hidden;
@@ -249,7 +249,7 @@ form input {
     border-radius: .5rem;
     transition: .5s;
     color: #fff;
-    text-transform: capitalize;
+    text-transform: uppercase;
 }
 
 .topics form div button {

@@ -47,12 +47,12 @@ const proccessItems = async (url) => {
                     <div class="card" style="width: 18rem">
                         <img src="${item['model']['images'][0]['image']}" class="card-img-top" alt="Faild to load picture" />
                         <div class="card-body">
-                            <h5 class="card-title">${item['model']['name']}</h5>
+                            <h5 class="card-title" title="${item['model']['manufacturer']['name']} ${item['model']['name']}">${item['model']['manufacturer']['name']} ${item['model']['name']}</h5>
                             <p class="card-text">
-                                <small>CPU: ${item['cpu_type']['name']['name'] + ' ' + item['cpu_type']['cpu_type']}</small>
-                                <small>Ram: ${item['ram_cache'] + 'gb-' + item['ram_type']['name']}</small>
-                                <small>HDD: ${item['hdd_size']}${item['hdd_size'] > 20 ? 'gb-' : 'tb-'}${item['hdd_type']['name']}</small>
-                                <small>GPU: ${item['gpu']['name']}</small>
+                                <small title="CPU: ${item['cpu_type']['name']['name'] + ' ' + item['cpu_type']['cpu_type']}">CPU: ${item['cpu_type']['name']['name'] + ' ' + item['cpu_type']['cpu_type']}</small>
+                                <small title="Ram: ${item['ram_cache'] + 'gb-' + item['ram_type']['name']}">Ram: ${item['ram_cache'] + 'gb-' + item['ram_type']['name']}</small>
+                                <small title="HDD: ${item['hdd_size']}${item['hdd_size'] > 20 ? 'gb-' : 'tb-'}${item['hdd_type']['name']}">HDD: ${item['hdd_size']}${item['hdd_size'] > 20 ? 'gb-' : 'tb-'}${item['hdd_type']['name']}</small>
+                                <small title="GPU: ${item['gpu']['name']}">GPU: ${item['gpu']['name']}</small>
                             </p>
                             <a href="item/${item['id']}" class="btn btn-primary">More Info</a>
                         </div>

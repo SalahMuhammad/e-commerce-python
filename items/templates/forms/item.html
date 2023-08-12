@@ -5,8 +5,10 @@
     <div class="container">
         <form method="POST" action="">
             {% csrf_token %}
+
+            {{ form.as_p }}
             
-            <div class="mb-3">
+            <!-- <div class="mb-3">
                 <label for="i-1" class="form-label">Model</label>
                 <input type="text" class="form-control" name="model" id="i-1" placeholder="Model" list="model">
                 <datalist id="model">
@@ -14,9 +16,9 @@
                         <option value="{{ model }}"/>
                     {% endfor %}
                 </datalist>
-            </div>
+            </div> -->
 
-            <div class="mb-3">
+            <!-- <div class="mb-3">
                 <label for="i-2" class="form-label">CPU Type</label>
                 <input type="text" class="form-control" name="cpu_type" id="i-2" placeholder="CPU Type" list="cpu_type">
                 <datalist id="cpu_type">
@@ -24,12 +26,12 @@
                         <option value="{{ cpu_type }}"/>
                     {% endfor %}
                 </datalist>
-            </div>
+            </div> -->
 
-            <div class="mb-3">
+            <!-- <div class="mb-3">
                 <label for="i-3" class="form-label">CPU Speed</label>
                 <input type="text" class="form-control" name="cpu_speed" id="i-3" placeholder="CPU Speed">
-            </div>
+            </div> -->
 
             <div class="mb-3">
                 <label for="i-4" class="form-label">Ram Type</label>
@@ -41,10 +43,10 @@
                 </datalist>
             </div>
 
-            <div class="mb-3">
+            <!-- <div class="mb-3">
                 <label for="i-5" class="form-label">Ram Size</label>
                 <input type="text" class="form-control" name="ram_size" id="i-5" placeholder="Ram Size">
-            </div>
+            </div> -->
 
             <div class="mb-3">
                 <label for="i-6" class="form-label">HDD Type</label>
@@ -56,10 +58,10 @@
                 </datalist>
             </div>
 
-            <div class="mb-3">
+            <!-- <div class="mb-3">
                 <label for="i-6" class="form-label">HDD Size</label>
                 <input type="text" class="form-control" name="hdd_size" id="i-6" placeholder="HDD Size">
-            </div>
+            </div> -->
 
             <div class="mb-3">
                 <label for="i-7" class="form-label">GPU Type</label>
@@ -81,10 +83,10 @@
                 </datalist>
             </div>
 
-            <div class="mb-3">
+            <!-- <div class="mb-3">
                 <label for="i-9" class="form-label">Screen Size</label>
                 <input type="text" class="form-control" name="screen_size" id="i-9" placeholder="Screen Size">
-            </div>
+            </div> -->
 
             <div class="mb-3">
                 <label for="i-10" class="form-label">Sound Type</label>
@@ -96,12 +98,12 @@
                 </datalist>
             </div>
 
-            <div class="mb-3">
+            <!-- <div class="mb-3">
                 <label for="i-11" class="form-label">Rotation</label>
                 <input type="text" maxlength="3" class="form-control" name="rotation" id="i-11" placeholder="Rotation">
-            </div>
+            </div> -->
 
-            <div class="mb-3">
+            <!-- <div class="mb-3">
                 <label for="i-15" class="form-label">Price</label>
                 <input type="text" class="form-control" name="price" id="i-15" placeholder="Price">
             </div>
@@ -109,14 +111,14 @@
             <div class="mb-3">
                 <label for="i-16" class="form-label">Discount</label>
                 <input type="text" class="form-control" name="disc" id="i-16" placeholder="Discount">
-            </div>
+            </div> -->
 
-            <div class="mb-3">
+            <!-- <div class="mb-3">
                 <input type="checkbox" class="form-check-input" name="touch_screen" id="i-12" placeholder="Touch Screen">
                 <label for="i-12" class="form-check-label">Touch Screen</label>
-            </div>
+            </div> -->
 
-            <div class="mb-3">
+            <!-- <div class="mb-3">
                 <input type="checkbox" class="form-check-input" name="illuminated_keyboard" id="i-13" placeholder="Illuminated Keyboard">
                 <label for="i-13" class="form-check-label">Illuminated Keyboard</label>
             </div>
@@ -124,7 +126,7 @@
             <div class="mb-3">
                 <input type="checkbox" class="form-check-input" name="original_windows" id="i-14" placeholder="Original Windows">
                 <label for="i-14" class="form-check-label">Original Windows</label>
-            </div>
+            </div> -->
 
             <div class="mb-3">
                 <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-secondary mb-3 container-fluid">Cancel</a>

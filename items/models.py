@@ -22,7 +22,7 @@ class Model(models.Model):
     name = models.CharField(unique=True, max_length=30)
     # specifications = models.ManyToManyField(
     #     'Specifications', related_name='sp')
-    note = models.CharField(max_length=100)
+    note = models.CharField(max_length=100, blank=True)
     images = models.ManyToManyField('Image', related_name='im')
 
     def __str__(self):
@@ -43,7 +43,7 @@ class Image(models.Model):
     image = models.ImageField(upload_to='images')
 
     def __str__(self):
-        return self.image
+        return self.image.url
 
 
 # class Specifications(models.Model):

@@ -77,8 +77,10 @@ class Items(generics.ListAPIView):
         gpu_list = Q(gpu__id__in=gpu_list) if gpu_list else Q(
             gpu__id__isnull=False)
 
+        is_available = Q(is_available=True)
+
         queryset = Item.objects.filter(
-            type_list & cpu_list & cpu_type_list & ram_list & hdd_list & gpu_list)
+            type_list & cpu_list & cpu_type_list & ram_list & hdd_list & gpu_list & is_available)
 
         return queryset
 
