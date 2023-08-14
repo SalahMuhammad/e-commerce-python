@@ -1,3 +1,16 @@
+window.addEventListener('load', (e) => {    
+    getCPUTypes()
+
+    checkboxesAction()
+
+    // sidebar toggle 
+    toggle = document.querySelector('.toggleee')
+            
+    toggle.addEventListener('click', () => {
+        document.querySelector('.topics').classList.toggle('active')
+    })
+})
+
 const fetchData = async (url) => {
     data =  await (await fetch(url)).json()
 
@@ -32,8 +45,10 @@ const proccessItems = async (url) => {
 
     row = document.getElementsByClassName('row')[0]
     row.innerHTML = ''
+
+    setDataLength(data.count)
     
-    if (data.detail) {
+    if (data.detail || data.results.length == 0) {
         row.innerHTML = 'no data found'
         return
     }
@@ -45,13 +60,13 @@ const proccessItems = async (url) => {
             <div class="col">
                 <a href="item/${item['id']}" class="card-link">
                     <div class="card" style="width: 18rem">
-                        <img src="${item['model']['images'][0]['image']}" class="card-img-top" alt="Faild to load picture" />
+                        <img src="${item['model']['images'].length == 0 ? '' : item['model']['images'][0]['image']}" class="card-img-top" alt="Faild to load picture" />
                         <div class="card-body">
                             <h5 class="card-title" title="${item['model']['manufacturer']['name']} ${item['model']['name']}">${item['model']['manufacturer']['name']} ${item['model']['name']}</h5>
                             <p class="card-text">
                                 <small title="CPU: ${item['cpu_type']['name']['name'] + ' ' + item['cpu_type']['cpu_type']}">CPU: ${item['cpu_type']['name']['name'] + ' ' + item['cpu_type']['cpu_type']}</small>
-                                <small title="Ram: ${item['ram_cache'] + 'gb-' + item['ram_type']['name']}">Ram: ${item['ram_cache'] + 'gb-' + item['ram_type']['name']}</small>
-                                <small title="HDD: ${item['hdd_size']}${item['hdd_size'] > 20 ? 'gb-' : 'tb-'}${item['hdd_type']['name']}">HDD: ${item['hdd_size']}${item['hdd_size'] > 20 ? 'gb-' : 'tb-'}${item['hdd_type']['name']}</small>
+                                <small title="Ram: ${item['ram_cache'] + 'gb ' + item['ram_type']['name']}">Ram: ${item['ram_cache'] + 'gb ' + item['ram_type']['name']}</small>
+                                <small title="HDD: ${item['hdd_size']}${item['hdd_size'] > 20 ? 'gb ' : 'tb '}${item['hdd_type']['name']}">HDD: ${item['hdd_size']}${item['hdd_size'] > 20 ? 'gb ' : 'tb '}${item['hdd_type']['name']}</small>
                                 <small title="GPU: ${item['gpu']['name']}">GPU: ${item['gpu']['name']}</small>
                             </p>
                             <a href="item/${item['id']}" class="btn btn-primary">More Info</a>
@@ -63,14 +78,10 @@ const proccessItems = async (url) => {
     }
 }
 
-submitForm = (event) => {
-    event.preventDefault();
-
-    btn = document.querySelector('button[type="submit"]')
-    spinner = btn.firstChild.nextElementSibling
-    spinner.classList.remove('spinner-border-hidden')
-    spinner.classList.add('spinner-border')
-    btn.disabled = true
+getItems = () => {
+    loadingSpinner = document.querySelector('.spinner-border-hidden')
+    loadingSpinner.classList.remove('spinner-border-hidden')
+    loadingSpinner.classList.add('spinner-border')
 
     const types = document.querySelectorAll('input[name="type"][type="checkbox"]:checked');
     const cpus = document.querySelectorAll('input[name="cpu"][type="checkbox"]:checked');
@@ -90,12 +101,17 @@ submitForm = (event) => {
 
     proccessItems(url)
 
-    // btn.disabled = false
-    btn.disabled = false
-    spinner.classList.remove('spinner-border')
-    spinner.classList.add('spinner-border-hidden')
+    loadingSpinner.classList.remove('spinner-border')
+    loadingSpinner.classList.add('spinner-border-hidden')
 }
 
+/**
+ * it's process multiple params with same name in single parameter, 
+ * with multi values
+ * 
+ * @param  {...any} elements 
+ * @returns 
+ */
 const proccessQueryStrParams = (...elements) => {
     list = []
 
@@ -136,20 +152,27 @@ const proccessCPUTypesList = async (url) => {
         </div>`
     })
     
+    document.querySelectorAll('input[type="checkbox"][name="cpu_type"]').forEach(item => {
+        item.onclick = getItems
+    });
 }
 
-window.addEventListener('load', (e) => {
-    const form = document.getElementById('form');
-    form.addEventListener('submit', submitForm)
-    
+const checkboxesAction = () => {
+    checkboxes = document.querySelectorAll('input[type="checkbox"]')
+    checkboxes.forEach((checkbox) => {
+        checkbox.onclick =  getItems
+    })
+}
+
+const getCPUTypes = () => {
     const cpus = document.querySelectorAll('input[name="cpu"][type="checkbox"]');
 
     cpus.forEach((cpu) => {
         cpu.addEventListener('click', (e) => {
-            const cpus = document.querySelectorAll('input[name="cpu"][type="checkbox"]:checked');
+            const cpuss = document.querySelectorAll('input[name="cpu"][type="checkbox"]:checked');
             cpu_list = []
 
-            cpus.forEach((cpu) => {
+            cpuss.forEach((cpu) => {
                 cpu_list.push(cpu.value)
             })
 
@@ -160,11 +183,8 @@ window.addEventListener('load', (e) => {
             proccessCPUTypesList(url)
         })  
     })
+}
 
-    // sidebar toggle 
-    toggle = document.querySelector('.toggleee')
-            
-    toggle.addEventListener('click', () => {
-        document.querySelector('.topics').classList.toggle('active')
-    })
-})
+const setDataLength = (length) => {
+    document.getElementById('result-length').innerHTML = '(' + length + ')'
+}

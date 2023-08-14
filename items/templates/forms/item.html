@@ -35,7 +35,7 @@
 
             <div class="mb-3">
                 <label for="i-4" class="form-label">Ram Type</label>
-                <input type="text" class="form-control" name="ram_type" id="i-4" placeholder="Ram Type" list="ram_type">
+                <input type="text" class="form-control" name="ram_type" value="{{ ram_type }}" id="i-4" placeholder="Ram Type" list="ram_type">
                 <datalist id="ram_type">
                     {% for ram_type in ram_types %}
                         <option value="{{ ram_type }}"/>
@@ -50,7 +50,7 @@
 
             <div class="mb-3">
                 <label for="i-6" class="form-label">HDD Type</label>
-                <input type="text" class="form-control" name="hdd_type" id="i-6" placeholder="HDD Type" list="hdd_type">
+                <input type="text" class="form-control" name="hdd_type" value="{{ hdd_type }}" id="i-6" placeholder="HDD Type" list="hdd_type">
                 <datalist id="hdd_type">
                     {% for hdd_type in hdd_types %}
                         <option value="{{ hdd_type }}"/>
@@ -65,7 +65,7 @@
 
             <div class="mb-3">
                 <label for="i-7" class="form-label">GPU Type</label>
-                <input type="text" class="form-control" name="gpu_type" id="i-7" placeholder="GPU Type" list="gpu_type">
+                <input type="text" class="form-control" name="gpu_type" value="{{ gpu_type }}" id="i-7" placeholder="GPU Type" list="gpu_type">
                 <datalist id="gpu_type">
                     {% for gpu_type in gpu_types %}
                         <option value="{{ gpu_type }}"/>
@@ -75,7 +75,7 @@
 
             <div class="mb-3">
                 <label for="i-8" class="form-label">Screen Resolution</label>
-                <input type="text" class="form-control" name="screen_resolution" id="i-8" placeholder="Screen Resolution" list="screen_resolution">
+                <input type="text" class="form-control" name="screen_resolution" value="{{ screen_resolution }}" id="i-8" placeholder="Screen Resolution" list="screen_resolution">
                 <datalist id="screen_resolution">
                     {% for screen_resolution in screen_resolutions %}
                         <option value="{{ screen_resolution }}"/>
@@ -90,7 +90,7 @@
 
             <div class="mb-3">
                 <label for="i-10" class="form-label">Sound Type</label>
-                <input type="text" class="form-control" name="sound_type" id="i-10" placeholder="Sound Type" list="sound_type">
+                <input type="text" class="form-control" name="sound_type" value="{{ sound_type }}" id="i-10" placeholder="Sound Type" list="sound_type">
                 <datalist id="sound_type">
                     {% for sound_type in sound_types %}
                         <option value="{{ sound_type }}"/>

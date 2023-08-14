@@ -1,16 +1,19 @@
-from urllib import response
-from django.db import IntegrityError
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.contrib import messages
 from django.views import View
 
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 from django.db.models import Q
 
-from .forms import ModelForm, ManufacturerForm, ItemForm
+from .forms import ModelForm, ItemForm
 
 from .models import *
 
+from django.urls import reverse
+
 from django.views.generic.edit import CreateView, UpdateView
+from django.views.generic.list import ListView
 
 from django.contrib.auth.decorators import login_required
 # from django.utils.decorators import method_decorator
@@ -36,7 +39,10 @@ def items(req):
             Q(model__name__contains=filter.strip()) & Q(is_available=True))
 
     page_obj = Paginator(items, 9)
-    page_num = page_obj.page(page)
+    try:
+        page_num = page_obj.page(page)
+    except:
+        page_num = page_obj.page(1)
 
     context = {'page_num': page_num, 'filter': filter, 'items': page_num, 'ram_types': ram_types,
                'cpus': cpus, 'hdd_types': hdd_types, 'gpus': gpus, 'types': types}
@@ -51,10 +57,12 @@ def item(req, id):
     return render(req, 'items/item.html', context)
 
 
-class ModelBase(View):
+class ModelBase(LoginRequiredMixin, View):
     model = Model
     form_class = ModelForm
     template_name = 'forms/model2.html'
+    login_url = "/auth"
+    # redirect_field_name = "next_page"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -78,7 +86,10 @@ class ModelBase(View):
 
         images = self.request.FILES.getlist('f')
 
-        modell.images.all().delete()
+        if images:
+            for image in modell.images.all():
+                image.delete()
+
         for image in images:
             modell.images.add(
                 Image.objects.create(image=image)
@@ -87,25 +98,58 @@ class ModelBase(View):
         return super().form_valid(form)
 
 
+class Models(ModelBase, ListView):
+    template_name = 'items/models.html'
+
+    def get_queryset(self):
+        qObject = None
+
+        filterr = self.request.GET.get('f')
+        page = self.request.GET.get(
+            'p') if self.request.GET.get('p') != None else '1'
+
+        if filterr:
+            qObject = Q(name__contains=filterr)
+        else:
+            qObject = Q(id__isnull=False)
+
+        queryset = Model.objects.filter(qObject)
+
+        page_obj = Paginator(queryset, 9)
+        page_num = page_obj.page(page)
+
+        return page_num
+
+    def get_context_data(self, **kwargs):
+        context = {
+            'models': self.get_queryset(),
+            'filter': self.request.GET.get('f')
+            # 'labels': list(self.get_queryset()[0].keys()),
+            # 'labels': self.get_queryset()._meta.get_fields(),
+        }
+
+        return context
+
+
 class ModelCreate(ModelBase, CreateView):
-    success_url = 'create'
-    pass
+
+    def get_success_url(self):
+        return reverse('model-list')
 
 
 class ModelUpdate(ModelBase, UpdateView):
-    success_url = ''
-    pass
 
+    def get_success_url(self):
+        return reverse('model-list')
 
-class ManufacturerBase(View):
-    model = Manufacturer
-    form_class = ManufacturerForm
-    template_name = 'forms/manufacturer.html'
-    success_url = 'create'
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
 
+        context['manufacturer'] = Model.objects.get(
+            id=self.kwargs.get('pk')).manufacturer
+        context['type'] = Model.objects.get(id=self.kwargs.get('pk')).typee
 
-class ManufacturerCreate(ManufacturerBase, CreateView):
-    pass
+        return context
 
 
 @login_required(login_url='/auth')
@@ -130,10 +174,10 @@ def cpuForm(req):
     return render(req, 'forms/cpu.html', context)
 
 
-class ItemBase(View):
+class ItemBase(LoginRequiredMixin, View):
     model = Item
     form_class = ItemForm
-    template_name = 'forms/item.html'
+    login_url = "/auth"
 
     def form_valid(self, form):
         item = form.save(commit=False)
@@ -169,9 +213,62 @@ class ItemBase(View):
         return context
 
 
+class Items(ItemBase, ListView):
+    template_name = 'items/items-list.html'
+
+    def get_queryset(self):
+        qObject = None
+
+        page = self.request.GET.get(
+            'p') if self.request.GET.get('p') != None else '1'
+        filterr = self.request.GET.get('f')
+
+        if filterr:
+            qObject = Q(model__name__contains=filterr)
+        else:
+            qObject = Q(id__isnull=False)
+
+        queryset = Item.objects.filter(qObject)
+
+        page_obj = Paginator(queryset, 9)
+        page_num = page_obj.page(page)
+
+        return page_num
+
+    def get_context_data(self, **kwargs):
+        context = {
+            'items': self.get_queryset(),
+            'filter': self.request.GET.get('f')
+            # 'labels': list(self.get_queryset()[0].keys()),
+            # 'labels': self.get_queryset()._meta.get_fields(),
+        }
+
+        return context
+
+
 class ItemCreate(ItemBase, CreateView):
+    template_name = 'forms/item.html'
     success_url = '/'
 
+
+class ItemUpdate(ItemBase, UpdateView):
+    template_name = 'forms/item.html'
+
+    def get_success_url(self):
+        return reverse('item-list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        item = Item.objects.get(id=self.kwargs.get('pk'))
+
+        context['gpu_type'] = item.gpu
+        context['ram_type'] = item.ram_type
+        context['hdd_type'] = item.hdd_type
+        context['screen_resolution'] = item.screen_resolution
+        context['sound_type'] = item.sound_type
+
+        return context
 
 # def handler404(request, exception):
 #     return render(request, 'items/404.html', status=404)

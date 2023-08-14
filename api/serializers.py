@@ -17,5 +17,5 @@ class ItemSerializer(ModelSerializer):
     class Meta:
         model = Item
         exclude = ['price', 'disc', 'screen_size', 'illuminated_keyboard',
-                   'original_windows', 'rotation', 'touch_screen']
+                   'original_windows', 'rotation', 'touch_screen', 'created', 'updated', 'is_available']
         depth = 2
