@@ -14,7 +14,10 @@ SECRET_KEY = 'django-insecure-!bs&cefzll7!khven(-jd@7=-jzs4-8r)s_2l_b$&wu)f_ijjg
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = [
+#     "http://localhost:8000",
+#     "http://127.0.0.1:8000",
+# ]
 
 
 REST_FRAMEWORK = {
@@ -22,7 +25,7 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 9
 }
 
-AUTH_USER_MODEL = "authentication.User" 
+AUTH_USER_MODEL = "authentication.User"
 
 # Application definition
 

@@ -1,0 +1,38 @@
+{% extends 'main.html' %}
+
+{% block content %}
+
+    <!-- <div class="container"> -->
+        <table class="items-table">
+            <thead>
+                <tr>
+                    <td><h5>Manufacturer</h5></td>
+                    <td><h5>Type</h5></td>
+                    <td><h5>Model</h5></td>
+                    <td><h5>Note</h5></td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for model in models %}
+                    <tr>
+                        <td><a href="{% url 'update-model' model.id %}">{{ model.manufacturer }}</a></td>
+                        <td>{{ model.typee }}</td>
+                        <td>{{ model}}</td>
+                        <td>{{ model.note }}</td>
+                    </tr>  
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <span class="step-links container-fluid d-flex justify-content-around">
+            {% if models.has_previous %}
+                <a href="?p={{ models.previous_page_number }}{% if filter %}&f={{ filter }}{% endif %}">&laquo; previous</a>
+            {% endif %}
+        
+            {% if models.has_next %}
+                <a href="?p={{ models.next_page_number }}{% if filter %}&f={{ filter }}{% endif %}">next &raquo;</a>
+            {% endif %}
+        </span>
+    <!-- </div> -->
+
+{% endblock %}

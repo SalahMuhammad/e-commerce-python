@@ -22,11 +22,15 @@ class Model(models.Model):
     name = models.CharField(unique=True, max_length=30)
     # specifications = models.ManyToManyField(
     #     'Specifications', related_name='sp')
-    note = models.CharField(max_length=100)
+    note = models.CharField(max_length=100, blank=True)
     images = models.ManyToManyField('Image', related_name='im')
+    updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name  # self.manufacturer.name + ' ' + self.name
+    
+    class Meta:
+        ordering = ['-updated']
 
 
 # def get_upload_path(instance, filename):
@@ -43,7 +47,14 @@ class Image(models.Model):
     image = models.ImageField(upload_to='images')
 
     def __str__(self):
-        return self.image
+        return self.image.url
+
+    def delete(self, *args, **kwargs):
+        if self.image:
+            storage, path = self.image.storage, self.image.path
+            storage.delete(path)
+
+        super().delete(*args, **kwargs)
 
 
 # class Specifications(models.Model):
@@ -120,20 +131,20 @@ class Item(models.Model):
     cpu_type = models.ForeignKey('CPUType', on_delete=models.PROTECT)
     cpu_speed = models.FloatField()
     ram_type = models.ForeignKey('RamType', on_delete=models.PROTECT)
-    ram_cache = models.SmallIntegerField()
+    ram_cache = models.SmallIntegerField(verbose_name='ram speed')
     hdd_type = models.ForeignKey('HDDType', on_delete=models.PROTECT)
     hdd_size = models.SmallIntegerField()
     gpu = models.ForeignKey('GPUType', on_delete=models.PROTECT)
-    touch_screen = models.BooleanField()
+    touch_screen = models.BooleanField(verbose_name='touch')
     rotation = models.CharField(max_length=3)
     illuminated_keyboard = models.BooleanField()
     original_windows = models.BooleanField()
     screen_resolution = models.ForeignKey(
-        'ScreenResolution', on_delete=models.PROTECT)
+        'ScreenResolution', on_delete=models.PROTECT, verbose_name='resolution')
     screen_size = models.FloatField()
     sound_type = models.ForeignKey('SoundType', on_delete=models.PROTECT)
     price = models.IntegerField()
-    disc = models.SmallIntegerField()
+    disc = models.SmallIntegerField('discount')
     is_available = models.BooleanField()
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)

@@ -1,0 +1,38 @@
+{% extends 'main.html' %}
+
+{% block content %}
+
+    <div class="container">
+        <form method="POST" action="" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label for="i-1" class="form-label">Manufacturer</label>
+                <input type="text" class="form-control" name="manufacturer" value="{{ manufacturer }}" id="i-1" placeholder="Manufacturer" list="manufacturer">
+                <datalist id="manufacturer">
+                    {% for manufacturer in manufacturers %}
+                        <option value="{{ manufacturer }}"/>
+                    {% endfor %}
+                </datalist>
+            </div>
+
+            <div class="mb-3">
+                <label for="i-2" class="form-label">Type</label>
+                <input type="text" class="form-control" name="type" value="{{ type }}" id="i-2" placeholder="Type" list="type">
+                <datalist id="type">
+                    {% for type in types %}
+                        <option value="{{ type }}"/>
+                    {% endfor %}
+                </datalist>
+            </div>
+            
+            {{ form.as_p }}
+
+            <label for="myfile">Select a file:</label>
+            <input id="myfile" type="file" multiple name="f">
+
+            <input type="submit" value="submit">
+        </form>
+    </div>
+
+{% endblock %}

@@ -1,20 +1,28 @@
-from django.db import IntegrityError
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.contrib import messages
-from django.db.models import Q
 from django.views import View
+
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+from django.db.models import Q
+
+from .forms import ModelForm, ItemForm
 
 from .models import *
 
+from django.urls import reverse
+
+from django.views.generic.edit import CreateView, UpdateView
+from django.views.generic.list import ListView
+
 from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
+# from django.utils.decorators import method_decorator
 
 from django.core.paginator import Paginator
 
 
 # @permission_required('items.add_group', login_url="/auth")
 def items(req):
-    print(req.path)
     ram_types = RamType.objects.all()
     hdd_types = HDDType.objects.all()
     cpus = CPU.objects.all()
@@ -24,17 +32,17 @@ def items(req):
     page = req.GET.get('p') if req.GET.get('p') != None else '1'
     filter = req.GET.get('f') if req.GET.get('f') != None else None
 
-    items = Item.objects.all()
+    items = Item.objects.filter(is_available=True)
 
     if filter:
         items = Item.objects.filter(
-            Q(model__name__contains=filter) |
-            Q(ram_type__name__contains=filter) |
-            Q(gpu__name__contains=filter) |
-            Q(hdd_type__name__contains=filter))
+            Q(model__name__contains=filter.strip()) & Q(is_available=True))
 
     page_obj = Paginator(items, 9)
-    page_num = page_obj.page(page)
+    try:
+        page_num = page_obj.page(page)
+    except:
+        page_num = page_obj.page(1)
 
     context = {'page_num': page_num, 'filter': filter, 'items': page_num, 'ram_types': ram_types,
                'cpus': cpus, 'hdd_types': hdd_types, 'gpus': gpus, 'types': types}
@@ -49,77 +57,99 @@ def item(req, id):
     return render(req, 'items/item.html', context)
 
 
-class Model(View):
+class ModelBase(LoginRequiredMixin, View):
     model = Model
-    template_name = 'forms/model.html'
+    form_class = ModelForm
+    template_name = 'forms/model2.html'
+    login_url = "/auth"
+    # redirect_field_name = "next_page"
 
-    @method_decorator(login_required)
-    def get(self, req, *args, **kwargs):
-        manufacturers = Manufacturer.objects.all()
-        types = Type.objects.all()
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
 
-        ctx = {'manufacturers': manufacturers, 'types': types}
-        return render(req, self.template_name, ctx)
+        context['manufacturers'] = Manufacturer.objects.all()
+        context['types'] = Type.objects.all()
 
-    @method_decorator(login_required)
-    def post(self, req, *args, **kwargs):
-        manufacturer, created = Manufacturer.objects.get_or_create(
-            name=req.POST.get('manufacturer').lower().strip())
-        typee, created = Type.objects.get_or_create(
-            name=req.POST.get('type').lower().strip())
-        model = req.POST.get('model').lower().strip()
-        note = req.POST.get('note').lower().strip()
-        images = req.FILES.getlist('images')
+        return context
 
-        try:
-            model = self.model.objects.create(
-                manufacturer=manufacturer,
-                typee=typee,
-                name=model,
-                note=note,
+    def form_valid(self, form):
+        modell = form.save(commit=False)
+
+        manufacturer, create = Manufacturer.objects.get_or_create(
+            name=self.request.POST.get('manufacturer').lower().strip())
+        typee, create = Type.objects.get_or_create(
+            name=self.request.POST.get('type').lower().strip())
+
+        modell.manufacturer = manufacturer
+        modell.typee = typee
+        modell.save()
+
+        images = self.request.FILES.getlist('f')
+
+        if images:
+            for image in modell.images.all():
+                image.delete()
+
+        for image in images:
+            modell.images.add(
+                Image.objects.create(image=image)
             )
 
-            for image in images:
-                model.images.add(
-                    Image.objects.create(image=image)
-                )
-        except IntegrityError:
-            messages.error(req, 'This model is already exists')
-
-        return render(req, self.template_name)
+        return super().form_valid(form)
 
 
-@login_required(login_url='/auth')
-def modelForm(req):
-    manufacturers = Manufacturer.objects.all()
-    types = Type.objects.all()
+class Models(ModelBase, ListView):
+    template_name = 'items/models.html'
 
-    if req.method == 'POST':
-        manufacturer, created = Manufacturer.objects.get_or_create(
-            name=req.POST.get('manufacturer').lower().strip())
-        typee, created = Type.objects.get_or_create(
-            name=req.POST.get('type').lower().strip())
-        model = req.POST.get('model').lower().strip()
-        note = req.POST.get('note').lower().strip()
-        images = req.FILES.getlist('images')
+    def get_queryset(self):
+        qObject = None
 
-        try:
-            m = Model.objects.create(
-                manufacturer=manufacturer,
-                typee=typee,
-                name=model,
-                note=note,
-            )
+        filterr = self.request.GET.get('f')
+        page = self.request.GET.get(
+            'p') if self.request.GET.get('p') != None else '1'
 
-            for image in images:
-                i = Image.objects.create(image=image)
-                m.images.add(i)
-        except IntegrityError:
-            messages.error(req, 'This model is already exists')
+        if filterr:
+            qObject = Q(name__contains=filterr)
+        else:
+            qObject = Q(id__isnull=False)
 
-    context = {'manufacturers': manufacturers,
-               'types': types}
-    return render(req, 'forms/model.html', context)
+        queryset = Model.objects.filter(qObject)
+
+        page_obj = Paginator(queryset, 9)
+        page_num = page_obj.page(page)
+
+        return page_num
+
+    def get_context_data(self, **kwargs):
+        context = {
+            'models': self.get_queryset(),
+            'filter': self.request.GET.get('f')
+            # 'labels': list(self.get_queryset()[0].keys()),
+            # 'labels': self.get_queryset()._meta.get_fields(),
+        }
+
+        return context
+
+
+class ModelCreate(ModelBase, CreateView):
+
+    def get_success_url(self):
+        return reverse('model-list')
+
+
+class ModelUpdate(ModelBase, UpdateView):
+
+    def get_success_url(self):
+        return reverse('model-list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context['manufacturer'] = Model.objects.get(
+            id=self.kwargs.get('pk')).manufacturer
+        context['type'] = Model.objects.get(id=self.kwargs.get('pk')).typee
+
+        return context
 
 
 @login_required(login_url='/auth')
@@ -144,117 +174,101 @@ def cpuForm(req):
     return render(req, 'forms/cpu.html', context)
 
 
-@login_required(login_url='/auth')
-def itemForm(req):
-    # form = ModelForm()
-    models = Model.objects.all()
-    cpu_types = CPUType.objects.all()
-    ram_types = RamType.objects.all()
-    hdd_types = HDDType.objects.all()
-    gpu_types = GPUType.objects.all()
-    screen_resolutions = ScreenResolution.objects.all()
-    sound_types = SoundType.objects.all()
+class ItemBase(LoginRequiredMixin, View):
+    model = Item
+    form_class = ItemForm
+    login_url = "/auth"
 
-    if req.method == 'POST':
-        model = None
-        cpu_type = None
-        try:
-            model = Model.objects.get(
-                name=req.POST.get('model').lower().strip())
-        except Model.DoesNotExist:
-            messages.error(req, 'Model is not exists')
-        try:
-            cpu_type = CPUType.objects.get(
-                cpu_type=req.POST.get('cpu_type').lower().strip())
-        except CPUType.DoesNotExist:
-            messages.error(req, 'CPUType is not exists')
-        cpu_speed = req.POST.get('cpu_speed').lower().strip()
-        ram_type, created = RamType.objects.get_or_create(
-            name=req.POST.get('ram_type').lower().strip())
-        ram_size = req.POST.get('ram_size').lower().strip()
-        hdd_type, created = HDDType.objects.get_or_create(
-            name=req.POST.get('hdd_type').lower().strip())
-        hdd_size = req.POST.get('hdd_size').lower().strip()
+    def form_valid(self, form):
+        item = form.save(commit=False)
+
+        ram_type, create = RamType.objects.get_or_create(
+            name=self.request.POST.get('ram_type').lower().strip())
+        hdd_type, create = HDDType.objects.get_or_create(
+            name=self.request.POST.get('hdd_type').lower().strip())
         gpu, create = GPUType.objects.get_or_create(
-            name=req.POST.get('gpu_type').lower().strip())
-        screen_resol, created = ScreenResolution.objects.get_or_create(
-            name=req.POST.get('screen_resolution').lower().strip())
-        sound_t, created = SoundType.objects.get_or_create(
-            name=req.POST.get('sound_type').lower().strip())
-        screen_size = req.POST.get('screen_size').strip()
-        rotation = req.POST.get('rotation').lower().strip()
-        touch_screen = True if req.POST.get('touch_screen') == 'on' else False
-        illuminated_keyboard = True if req.POST.get(
-            'illuminated_keyboard') == 'on' else False
-        original_windows = True if req.POST.get('original_windows') else False
-        price = req.POST.get('price').strip()
-        disc = req.POST.get('disc').strip()
+            name=self.request.POST.get('gpu_type').lower().strip())
+        screen_resolution, create = ScreenResolution.objects.get_or_create(
+            name=self.request.POST.get('screen_resolution').lower().strip())
+        sound_type, create = SoundType.objects.get_or_create(
+            name=self.request.POST.get('sound_type').lower().strip())
 
-        try:
-            Item.objects.create(
-                model=model,
-                cpu_type=cpu_type,
-                cpu_speed=cpu_speed,
-                ram_type=ram_type,
-                ram_cache=ram_size,
-                hdd_type=hdd_type,
-                hdd_size=hdd_size,
-                gpu=gpu,
-                screen_resolution=screen_resol,
-                sound_type=sound_t,
-                screen_size=screen_size,
-                rotation=rotation,
-                touch_screen=touch_screen,
-                illuminated_keyboard=illuminated_keyboard,
-                original_windows=original_windows,
-                price=price,
-                disc=disc,
-            )
-            return redirect('home')
-        except IntegrityError:
-            messages.error(req, 'Item Already exists...')
-        except ValueError:
-            messages.error(req, 'Invalid inputs')
-        except:
-            messages.error(req, 'an error occured')
+        item.ram_type = ram_type
+        item.hdd_type = hdd_type
+        item.gpu = gpu
+        item.screen_resolution = screen_resolution
+        item.sound_type = sound_type
 
-    context = {'models': models, 'cpu_types': cpu_types, 'ram_types': ram_types, 'hdd_types': hdd_types,
-               'gpu_types': gpu_types, 'screen_resolutions': screen_resolutions, 'sound_types': sound_types}
-    return render(req, 'forms/item.html', context)
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context['gpu_types'] = GPUType.objects.all()
+        context['ram_types'] = RamType.objects.all()
+        context['hdd_types'] = HDDType.objects.all()
+        context['screen_resolutions'] = ScreenResolution.objects.all()
+        context['sound_types'] = SoundType.objects.all()
+
+        return context
 
 
-@login_required(login_url='/auth')
-def specificationsForm(req):
-    screen_resolutions = ScreenResolution.objects.all()
-    sound_types = SoundType.objects.all()
+class Items(ItemBase, ListView):
+    template_name = 'items/items-list.html'
 
-    if req.method == 'POST':
-        screen_resol, created = ScreenResolution.objects.get_or_create(
-            name=req.POST.get('screen_resolution').lower())
-        sound_t, created = SoundType.objects.get_or_create(
-            name=req.POST.get('sound_type').lower())
-        screen_size = req.POST.get('screen_size')
-        rotation = req.POST.get('rotation').lower()
-        touch_screen = True if req.POST.get('touch_screen') == 'on' else False
-        illuminated_keyboard = True if req.POST.get(
-            'illuminated_keyboard') == 'on' else False
-        original_windows = True if req.POST.get('original_windows') else False
+    def get_queryset(self):
+        qObject = None
 
-        try:
-            Specifications.objects.create(
-                screen_resolution=screen_resol,
-                sound_type=sound_t,
-                screen_size=screen_size,
-                rotation=rotation,
-                touch_screen=touch_screen,
-                illuminated_keyboard=illuminated_keyboard,
-                original_windows=original_windows
-            )
-        except ValueError:
-            messages.error(req, 'Invalid values')
-        except IntegrityError:
-            messages.error(req, 'This specifications alredy exists')
+        page = self.request.GET.get(
+            'p') if self.request.GET.get('p') != None else '1'
+        filterr = self.request.GET.get('f')
 
-    context = {'screen_resolutions': screen_resolutions,
-               'sound_types': sound_types}
-    return render(req, 'forms/specifications.html', context)
+        if filterr:
+            qObject = Q(model__name__contains=filterr)
+        else:
+            qObject = Q(id__isnull=False)
+
+        queryset = Item.objects.filter(qObject)
+
+        page_obj = Paginator(queryset, 9)
+        page_num = page_obj.page(page)
+
+        return page_num
+
+    def get_context_data(self, **kwargs):
+        context = {
+            'items': self.get_queryset(),
+            'filter': self.request.GET.get('f')
+            # 'labels': list(self.get_queryset()[0].keys()),
+            # 'labels': self.get_queryset()._meta.get_fields(),
+        }
+
+        return context
+
+
+class ItemCreate(ItemBase, CreateView):
+    template_name = 'forms/item.html'
+    success_url = '/'
+
+
+class ItemUpdate(ItemBase, UpdateView):
+    template_name = 'forms/item.html'
+
+    def get_success_url(self):
+        return reverse('item-list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        item = Item.objects.get(id=self.kwargs.get('pk'))
+
+        context['gpu_type'] = item.gpu
+        context['ram_type'] = item.ram_type
+        context['hdd_type'] = item.hdd_type
+        context['screen_resolution'] = item.screen_resolution
+        context['sound_type'] = item.sound_type
+
+        return context
+
+# def handler404(request, exception):
+#     return render(request, 'items/404.html', status=404)

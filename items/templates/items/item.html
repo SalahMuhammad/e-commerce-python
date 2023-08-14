@@ -31,19 +31,19 @@
                     </tr>
                     <tr>
                         <td>CPU: </td>
-                        <td>{{ item.cpu_type }}</td>
+                        <td>{{ item.cpu_type.name }} {{ item.cpu_type }}</td>
                     </tr>
                     <tr>
                         <td>CPU Speed: </td>
-                        <td>{{ item.cpu_speed }}-GHZ</td>
+                        <td>{{ item.cpu_speed }} GHZ</td>
                     </tr>
                     <tr>
                         <td>Ram: </td>
-                        <td>{{ item.ram_cache }}GB-{{ item.ram_type }}</td>
+                        <td>{{ item.ram_cache }}GB {{ item.ram_type }}</td>
                     </tr>
                     <tr>
                         <td>HDD: </td>
-                        <td> {{item.hdd_size }}GB-{{ item.hdd_type }}</td>
+                        <td> {{item.hdd_size }}GB {{ item.hdd_type }}</td>
                     </tr>
                     <tr>
                         <td>GPU: </td>
@@ -55,7 +55,7 @@
                     </tr>
                     <tr>
                         <td>Screen Size: </td>
-                        <td>{{ item.screen_size }}-Inch</td>
+                        <td>{{ item.screen_size }} Inch</td>
                     </tr>
                     <tr>
                         <td>Touch Screen: </td>

@@ -1,14 +1,14 @@
 {% load static %}
 
 <aside class="topics">
-    <div class="toggleee"></div>
     <div class="topics__header">
         <h2>Specifications</h2>
+        <span id="result-length"></span>
+        <div class="spinner-border-hidden" role="status">
+        </div>
     </div>
 
-    <a href="{% url 'items' %}">All</a>
-
-    <form method="GET" style="width: 100%; gap: 1.5rem;" class="d-flex flex-column" id="form">
+    <div style="width: 100%; gap: 1.5rem;" class="d-flex flex-column">
 
         <div>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#type" aria-controls="type" aria-expanded="false" aria-label="Toggle type">
@@ -88,13 +88,7 @@
                 {% endfor %}
             </div>
         </div>
-
-        <!-- <input class="btn btn-primary" type="submit" value="Apply Filter"> -->
-        <button class="btn btn-primary" type="submit" >
-            <span class="spinner-border-hidden  spinner-border-sm" aria-hidden="true"></span>
-            Apply Filter
-        </button>
-    </form>
+    </div>
 
     <script src="{% static 'js/sidebar.js' %}"></script>
 </aside>
