@@ -15,9 +15,9 @@
             <tbody>
                 {% for model in models %}
                     <tr>
-                        <td><a href="{% url 'update-model' model.id %}">{{ model.manufacturer }}</a></td>
+                        <td>{{ model.manufacturer }}</td>
                         <td>{{ model.typee }}</td>
-                        <td>{{ model}}</td>
+                        <td><a href="{% url 'update-model' model.id %}">{{ model}}</a></td>
                         <td>{{ model.note }}</td>
                     </tr>  
                 {% endfor %}
