@@ -14,16 +14,25 @@ SECRET_KEY = 'django-insecure-!bs&cefzll7!khven(-jd@7=-jzs4-8r)s_2l_b$&wu)f_ijjg
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-# ALLOWED_HOSTS = [
-#     "http://localhost:8000",
-#     "http://127.0.0.1:8000",
-# ]
-
-
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 9
+    'PAGE_SIZE': 12
 }
+
+ADMINS = [
+    ('Salah Nazeer', 'salahnazeer93@gmail.com')
+]
+
+ALLOWED_HOSTS = [
+    '*',
+
+    # '.localhost',
+    # '192.168.1.7',
+    # '127.0.0.1',
+    # '[::1]',
+    #     "http://localhost:8000",
+    #     "http://127.0.0.1:8000",
+]
 
 AUTH_USER_MODEL = "authentication.User"
 

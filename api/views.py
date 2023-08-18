@@ -50,13 +50,12 @@ class Items(generics.ListAPIView):
     serializer_class = ItemSerializer
 
     def get_queryset(self):
-        type_list, cpu_list, cpu_type_list, ram_list, hdd_list, gpu_list = proccessStrParams(
+        type_list, cpu_list, cpu_type_list, ram_list, hdd_list = proccessStrParams(
             self.kwargs['typee'],
             self.kwargs['cpu'],
             self.kwargs['cpu_type'],
             self.kwargs['ram'],
-            self.kwargs['hdd'],
-            self.kwargs['gpu']
+            self.kwargs['hdd']
         )
 
         type_list = Q(model__typee__id__in=type_list) if type_list else Q(
@@ -74,24 +73,24 @@ class Items(generics.ListAPIView):
         hdd_list = Q(hdd_type__id__in=hdd_list) if hdd_list else Q(
             cpu_type__id__isnull=False)
 
-        gpu_list = Q(gpu__id__in=gpu_list) if gpu_list else Q(
-            gpu__id__isnull=False)
-
         is_available = Q(is_available=True)
 
         queryset = Item.objects.filter(
-            type_list & cpu_list & cpu_type_list & ram_list & hdd_list & gpu_list & is_available)
+            type_list & cpu_list & cpu_type_list & ram_list & hdd_list & is_available)
 
         return queryset
 
 
 @api_view(['GET'])
 def cpuTypes(req, id):
-    list, = proccessStrParams(id)
+    listt, = proccessStrParams(id)
 
-    list = Q(name__id__in=list)
+    availableCPUGenerations = Item.objects.filter(Q(is_available=True) &
+                                                  Q(cpu_type__name__id__in=listt)).values_list('cpu_type')
 
-    cpuTypes = CPUType.objects.filter(list)
+    qObject = Q(id__in=[i[0] for i in availableCPUGenerations])
+
+    cpuTypes = CPUType.objects.filter(qObject)
 
     serializer = CPUTypeSerializer(cpuTypes, many=True)
 

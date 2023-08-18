@@ -14,7 +14,7 @@
                                 <div class="card-body">
                                     <h5 class="card-title" title="{{ item.model.manufacturer }} {{ item.model }}">{{ item.model.manufacturer }} {{ item.model }}</h5>
                                     <p class="card-text">
-                                        <small title="CPU: {{ item.cpu_type.name }} {{ item.cpu_type }}">CPU: {{ item.cpu_type.name }} {{ item.cpu_type }}</small>
+                                        <small title="CPU: {{ item.cpu_type }}">CPU: {{ item.cpu_type }}</small>
                                         <small title="Ram: {{ item.ram_cache }}GB {{ item.ram_type }}">Ram: {{ item.ram_cache }}GB {{ item.ram_type }}</small>
                                         <small title="HDD: {{ item.hdd_size }}{% if item.hdd_size > 20 %}GB {%  else %}TB {%endif%} {{ item.hdd_type }}">HDD: {{ item.hdd_size }}{% if item.hdd_size > 20 %}GB {%  else %}TB {%endif%}{{ item.hdd_type }}</small>
                                         <small title="GPU: {{ item.gpu }}">GPU: {{ item.gpu }}</small>

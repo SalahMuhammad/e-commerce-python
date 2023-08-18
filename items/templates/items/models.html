@@ -3,13 +3,15 @@
 {% block content %}
 
     <!-- <div class="container"> -->
-        <table class="items-table">
+        <table class="common-tables">
             <thead>
                 <tr>
                     <td><h5>Manufacturer</h5></td>
                     <td><h5>Type</h5></td>
                     <td><h5>Model</h5></td>
                     <td><h5>Note</h5></td>
+                    <td>images</td>
+                    <td></td>
                 </tr>
             </thead>
             <tbody>
@@ -19,6 +21,12 @@
                         <td>{{ model.typee }}</td>
                         <td><a href="{% url 'update-model' model.id %}">{{ model}}</a></td>
                         <td>{{ model.note }}</td>
+                        <td>
+                            {% for img in model.images.all %}
+                                <img style="height: 3rem;" src="{{ img }}" alt="">
+                            {% endfor %}
+                        </td>
+                        <td><a href="{% url 'delete-model' model.id %}">delete</a></td>
                     </tr>  
                 {% endfor %}
             </tbody>

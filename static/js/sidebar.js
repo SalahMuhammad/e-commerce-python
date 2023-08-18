@@ -46,14 +46,12 @@ const proccessItems = async (url) => {
     row = document.getElementsByClassName('row')[0]
     row.innerHTML = ''
 
-    setDataLength(data.count)
+    nextAndPreviousLinksInit(data.next, data.previous)
     
     if (data.detail || data.results.length == 0) {
         row.innerHTML = 'no data found'
         return
     }
-
-    nextAndPreviousLinksInit(data.next, data.previous)
 
     for(item of data.results) {
         row.innerHTML += `
@@ -64,7 +62,7 @@ const proccessItems = async (url) => {
                         <div class="card-body">
                             <h5 class="card-title" title="${item['model']['manufacturer']['name']} ${item['model']['name']}">${item['model']['manufacturer']['name']} ${item['model']['name']}</h5>
                             <p class="card-text">
-                                <small title="CPU: ${item['cpu_type']['name']['name'] + ' ' + item['cpu_type']['cpu_type']}">CPU: ${item['cpu_type']['name']['name'] + ' ' + item['cpu_type']['cpu_type']}</small>
+                                <small title="CPU: ${item['cpu_type']['name']['name'] + '-' + item['cpu_type']['cpu_type']}">CPU: ${item['cpu_type']['name']['name'] + '-' + item['cpu_type']['cpu_type']}</small>
                                 <small title="Ram: ${item['ram_cache'] + 'gb ' + item['ram_type']['name']}">Ram: ${item['ram_cache'] + 'gb ' + item['ram_type']['name']}</small>
                                 <small title="HDD: ${item['hdd_size']}${item['hdd_size'] > 20 ? 'gb ' : 'tb '}${item['hdd_type']['name']}">HDD: ${item['hdd_size']}${item['hdd_size'] > 20 ? 'gb ' : 'tb '}${item['hdd_type']['name']}</small>
                                 <small title="GPU: ${item['gpu']['name']}">GPU: ${item['gpu']['name']}</small>
@@ -88,7 +86,11 @@ getItems = () => {
     const cpu_types = document.querySelectorAll('input[name="cpu_type"][type="checkbox"]:checked');
     const ram_types = document.querySelectorAll('input[name="ram_type"][type="checkbox"]:checked');
     const hdd_types = document.querySelectorAll('input[name="hdd_type"][type="checkbox"]:checked');
-    const gpus = document.querySelectorAll('input[name="gpu"][type="checkbox"]:checked');
+
+    setSelectedCount(
+        types.length, cpus.length, cpu_types.length, 
+        ram_types.length, hdd_types.length
+    )
 
     let url = 'api/items';
     url += proccessQueryStrParams(
@@ -96,8 +98,8 @@ getItems = () => {
         cpus, 
         cpu_types, 
         ram_types, 
-        hdd_types, 
-        gpus)
+        hdd_types
+    )
 
     proccessItems(url)
 
@@ -185,6 +187,9 @@ const getCPUTypes = () => {
     })
 }
 
-const setDataLength = (length) => {
-    document.getElementById('result-length').innerHTML = '(' + length + ')'
+const setSelectedCount = (...valuesList) => {
+    selectedCount = document.querySelectorAll('.selected-count')
+
+    for (elem in selectedCount)
+        selectedCount[elem].innerHTML = '(' + valuesList[elem] +')'
 }

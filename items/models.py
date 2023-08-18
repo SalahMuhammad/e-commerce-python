@@ -19,18 +19,18 @@ class Type(models.Model):
 class Model(models.Model):
     typee = models.ForeignKey(Type, on_delete=models.PROTECT)
     manufacturer = models.ForeignKey(Manufacturer, on_delete=models.PROTECT)
-    name = models.CharField(unique=True, max_length=30)
+    name = models.CharField(unique=True, max_length=50)
     # specifications = models.ManyToManyField(
     #     'Specifications', related_name='sp')
-    note = models.CharField(max_length=100, blank=True)
+    note = models.CharField(max_length=500, blank=True)
     images = models.ManyToManyField('Image', related_name='im')
     updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name  # self.manufacturer.name + ' ' + self.name
-    
+
     class Meta:
-        ordering = ['-updated']
+        ordering = ['manufacturer__name', 'name']
 
 
 # def get_upload_path(instance, filename):
@@ -84,10 +84,14 @@ class CPU(models.Model):
 
 class CPUType(models.Model):
     name = models.ForeignKey(CPU, on_delete=models.PROTECT)
-    cpu_type = models.CharField(unique=True, max_length=30)
+    cpu_type = models.CharField(max_length=30)
 
     def __str__(self):
-        return self.cpu_type  # self.name.name + ' ' + self.cpu_type
+        # self.name.name + ' ' + self.cpu_type
+        return self.name.name + '-' + self.cpu_type
+
+    class Meta:
+        ordering = ['cpu_type']
 
 
 class GPUType(models.Model):
@@ -95,6 +99,9 @@ class GPUType(models.Model):
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        ordering = ['name']
 
 
 class RamType(models.Model):
@@ -129,22 +136,22 @@ class Item(models.Model):
     model = models.ForeignKey(
         Model, related_name='items', on_delete=models.PROTECT)
     cpu_type = models.ForeignKey('CPUType', on_delete=models.PROTECT)
-    cpu_speed = models.FloatField()
+    cpu_speed = models.FloatField(blank=True, null=True)
     ram_type = models.ForeignKey('RamType', on_delete=models.PROTECT)
     ram_cache = models.SmallIntegerField(verbose_name='ram speed')
     hdd_type = models.ForeignKey('HDDType', on_delete=models.PROTECT)
     hdd_size = models.SmallIntegerField()
     gpu = models.ForeignKey('GPUType', on_delete=models.PROTECT)
     touch_screen = models.BooleanField(verbose_name='touch')
-    rotation = models.CharField(max_length=3)
+    rotation = models.CharField(max_length=3, blank=True, null=True)
     illuminated_keyboard = models.BooleanField()
     original_windows = models.BooleanField()
     screen_resolution = models.ForeignKey(
         'ScreenResolution', on_delete=models.PROTECT, verbose_name='resolution')
-    screen_size = models.FloatField()
+    screen_size = models.FloatField(blank=True, null=True)
     sound_type = models.ForeignKey('SoundType', on_delete=models.PROTECT)
     price = models.IntegerField()
-    disc = models.SmallIntegerField('discount')
+    disc = models.SmallIntegerField('discount', blank=True, null=True)
     is_available = models.BooleanField()
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)

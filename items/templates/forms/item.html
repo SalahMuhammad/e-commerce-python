@@ -3,7 +3,7 @@
 {% block content %}
 
     <div class="container">
-        <form method="POST" action="">
+        <form  id="item-form" method="POST" action="">
             {% csrf_token %}
 
             {{ form.as_p }}
@@ -35,7 +35,7 @@
 
             <div class="mb-3">
                 <label for="i-4" class="form-label">Ram Type</label>
-                <input type="text" class="form-control" name="ram_type" value="{{ ram_type }}" id="i-4" placeholder="Ram Type" list="ram_type">
+                <input type="text" class="form-control" name="ram_type" value="{{ ram_type }}" id="ram_type" placeholder="Ram Type" list="ram_type">
                 <datalist id="ram_type">
                     {% for ram_type in ram_types %}
                         <option value="{{ ram_type }}"/>
@@ -50,7 +50,7 @@
 
             <div class="mb-3">
                 <label for="i-6" class="form-label">HDD Type</label>
-                <input type="text" class="form-control" name="hdd_type" value="{{ hdd_type }}" id="i-6" placeholder="HDD Type" list="hdd_type">
+                <input type="text" class="form-control" name="hdd_type" value="{{ hdd_type }}" id="hdd_type" placeholder="HDD Type" list="hdd_type">
                 <datalist id="hdd_type">
                     {% for hdd_type in hdd_types %}
                         <option value="{{ hdd_type }}"/>
@@ -65,7 +65,7 @@
 
             <div class="mb-3">
                 <label for="i-7" class="form-label">GPU Type</label>
-                <input type="text" class="form-control" name="gpu_type" value="{{ gpu_type }}" id="i-7" placeholder="GPU Type" list="gpu_type">
+                <input type="text" class="form-control" name="gpu_type" value="{{ gpu_type }}" id="gpu" placeholder="GPU Type" list="gpu_type">
                 <datalist id="gpu_type">
                     {% for gpu_type in gpu_types %}
                         <option value="{{ gpu_type }}"/>
@@ -75,7 +75,7 @@
 
             <div class="mb-3">
                 <label for="i-8" class="form-label">Screen Resolution</label>
-                <input type="text" class="form-control" name="screen_resolution" value="{{ screen_resolution }}" id="i-8" placeholder="Screen Resolution" list="screen_resolution">
+                <input type="text" class="form-control" name="screen_resolution" value="{{ screen_resolution }}" id="screen_resolution" placeholder="Screen Resolution" list="screen_resolution">
                 <datalist id="screen_resolution">
                     {% for screen_resolution in screen_resolutions %}
                         <option value="{{ screen_resolution }}"/>
@@ -90,7 +90,7 @@
 
             <div class="mb-3">
                 <label for="i-10" class="form-label">Sound Type</label>
-                <input type="text" class="form-control" name="sound_type" value="{{ sound_type }}" id="i-10" placeholder="Sound Type" list="sound_type">
+                <input type="text" class="form-control" name="sound_type" value="{{ sound_type }}" id="sound_type" placeholder="Sound Type" list="sound_type">
                 <datalist id="sound_type">
                     {% for sound_type in sound_types %}
                         <option value="{{ sound_type }}"/>
@@ -134,5 +134,56 @@
             </div>
         </form>
     </div>
+
+    <script>
+        window.addEventListener('load', () => {
+            form = document.getElementById('item-form')
+            elem = form.querySelector('input[name="cpu_speed"]')
+
+            elem.addEventListener('paste', (e) => {
+                e.preventDefault();
+
+                clipboardData = e.clipboardData.getData('text/plain')
+
+                values = clipboardData.split('\t')
+
+                inputs = form.querySelectorAll('input')
+                selects = form.querySelectorAll('select')
+
+                // set model
+                for (let option of selects[0].options) {
+                    if (option.text === values[3].toLowerCase().trim() /* model */) {
+                        option.selected = true
+                        break;
+                    }
+                }
+
+                // set cpu type
+                for (let option of selects[1].options) {
+                    if (option.text === values[5].toLowerCase().trim() /* cpu */) {
+                        option.selected = true
+                        break;
+                    }
+                }
+
+                inputs[1].value = values[6] // cpu speed
+                inputs[2].value = values[7] // ram speed
+                inputs[3].value = values[9] // hdd size
+                inputs[4].checked = values[13].toLowerCase().trim() == 'n' ? false : true // touch
+                inputs[5].value = values[14].toLowerCase().trim() // rotation
+                inputs[6].checked = values[15].toLowerCase().trim() == 'n' ? false : true // illuminated keyvaluesoard
+                inputs[7].checked = values[16].toLowerCase().trim() == 'n' ? false : true //original windows
+                inputs[8].value = values[11] // screen size
+                inputs[9].value = parseInt(values[21]) // price
+                inputs[11].checked = true // is available
+                inputs[12].value = values[8].toLowerCase().trim() // ram type
+                inputs[13].value = values[10].toLowerCase().trim() // hdd type
+                inputs[14].value = values[12].toLowerCase().trim() // gpu
+                inputs[15].value = values[17].toLowerCase().trim() // screen resolution
+                inputs[16].value = values[18].toLowerCase().trim() // sound type
+            })
+        })
+        
+    </script>
 
 {% endblock %}

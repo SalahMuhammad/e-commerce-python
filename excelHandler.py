@@ -44,8 +44,8 @@ def proccess_workbook(filename, sheetname):
 
     # Create a copy to remove the note field, to get the number of occurrences of each element
     list_items_copy = list_items.copy()
-    for item in list_items_copy:
-        del item['note']
+    # for item in list_items_copy:
+    #     del item['note']
 
     # uniques
     uniques_list_items = []
@@ -55,25 +55,20 @@ def proccess_workbook(filename, sheetname):
         uniques_list_items.append(item)
 
     # set counts for each item in uniques list
-    for item in uniques_list_items:
-        item['count'] = list_items_copy.count(item)
-    print(uniques_list_items)
-    # copy list to clipboard
-    from tkinter import Tk
-    ## import re
-    ## b = re.sub(r"\"([a-z]*_)?[a-z]*\": null,", '', str)
-    # r = Tk()
-    # r.withdraw()
-    # r.clipboard_clear()
-    # r.clipboard_append(uniques_list_items)
-    # r.update()  # now it stays on the clipboard after the window is closed
-    # r.destroy()
+    # for item in uniques_list_items:
+    #     item['count'] = list_items_copy.count(item)
+
+    models = []
+    for i in uniques_list_items:
+        models.append([i['manufacturer'], i['model'], i['cpu']])
+
+    print(models)
 
 
-# proccess_workbook('op.xlsx', 'الشيت القديم')
+proccess_workbook('op.xlsx', 'الشيت القديم')
 
-from pathlib import Path
+# from pathlib import Path
 
-path = Path('fds')
+# path = Path('fds')
 
-path.rmdir()
+# path.rmdir()

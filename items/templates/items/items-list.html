@@ -1,9 +1,11 @@
 {% extends 'main.html' %}
 
+{% load static %}
+
 {% block content %}
 
     <!-- <div class="container"> -->
-        <table class="items-table">
+        <table class="common-tables">
             <thead>
                 <tr>
                     <td><h5>model</h5></td>
@@ -21,13 +23,14 @@
                     <td><h5>price</h5></td>
                     <td><h5>disc</h5></td>
                     <td><h5>is  available</h5></td>
+                    <td></td>
                 </tr>
             </thead>
             <tbody>
                 {% for item in items %}
                     <tr>
                         <td><a href="{% url 'update-item' item.id %}">{{ item.model.manufacturer }} {{ item.model }}</a></td>
-                        <td>{{ item.cpu_type.name }}&nbsp;{{ item.cpu_type }}@{{ item.cpu_speed }}GHZ</td>
+                        <td>{{ item.cpu_type }}@{{ item.cpu_speed }}GHZ</td>
                         <td>{{ item.ram_cache}}GB {{ item.ram_type }}</td>
                         <td>{{ item.hdd_size }}{% if item.hdd_size < 20 %}TB{% else %}GB{% endif %}&nbsp;{{ item.hdd_type }}</td>
                         <td>{{ item.gpu }}</td>
@@ -40,7 +43,13 @@
                         <td>{{ item.sound_type }}</td>
                         <td>{{ item.price }}</td>
                         <td>{{ item.disc }}</td>
-                        <td>{{ item.is_available }}</td>
+                        <td>
+                            <!-- <form method="POST" action="{% url 'toggle-item-availability' item.id %}"> -->
+                                <!-- {% csrf_token %} -->
+                                <a class="btn btn-light toggle-button" data-item_id="{{ item.id }}">{{ item.is_available }}</a>
+                            <!-- </form> -->
+                        </td>
+                        <td><a href="{% url 'delete-item' item.id %}">delete</a></td>
                     </tr>  
                 {% endfor %}
             </tbody>
@@ -56,5 +65,7 @@
             {% endif %}
         </span>
     <!-- </div> -->
+
+    <script src="{% static 'js/item-list.js' %}"></script>
 
 {% endblock %}

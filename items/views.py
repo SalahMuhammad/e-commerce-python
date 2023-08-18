@@ -1,18 +1,18 @@
-from django.shortcuts import render
-from django.contrib import messages
+from django.http import HttpResponseRedirect, JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from django.db.models import Q
 
-from .forms import ModelForm, ItemForm
+from .forms import ModelForm, ItemForm, CPUTypeForm
 
 from .models import *
 
 from django.urls import reverse
 
-from django.views.generic.edit import CreateView, UpdateView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 
 from django.contrib.auth.decorators import login_required
@@ -26,26 +26,25 @@ def items(req):
     ram_types = RamType.objects.all()
     hdd_types = HDDType.objects.all()
     cpus = CPU.objects.all()
-    gpus = GPUType.objects.all()
     types = Type.objects.all()
-
     page = req.GET.get('p') if req.GET.get('p') != None else '1'
-    filter = req.GET.get('f') if req.GET.get('f') != None else None
+    filter = req.GET.get('f').lower().strip(
+    ) if req.GET.get('f') != None else None
 
     items = Item.objects.filter(is_available=True)
 
     if filter:
-        items = Item.objects.filter(
-            Q(model__name__contains=filter.strip()) & Q(is_available=True))
+        items = Item.objects.filter((Q(model__name__contains=filter.strip()) | Q(
+            gpu__name__contains=filter.strip())) & Q(is_available=True))
 
-    page_obj = Paginator(items, 9)
+    page_obj = Paginator(items, 12)
     try:
         page_num = page_obj.page(page)
     except:
         page_num = page_obj.page(1)
 
     context = {'page_num': page_num, 'filter': filter, 'items': page_num, 'ram_types': ram_types,
-               'cpus': cpus, 'hdd_types': hdd_types, 'gpus': gpus, 'types': types}
+               'cpus': cpus, 'hdd_types': hdd_types, 'types': types}
     return render(req, 'items/home.html', context)
 
 
@@ -115,7 +114,7 @@ class Models(ModelBase, ListView):
 
         queryset = Model.objects.filter(qObject)
 
-        page_obj = Paginator(queryset, 9)
+        page_obj = Paginator(queryset, 20)
         page_num = page_obj.page(page)
 
         return page_num
@@ -134,7 +133,7 @@ class Models(ModelBase, ListView):
 class ModelCreate(ModelBase, CreateView):
 
     def get_success_url(self):
-        return reverse('model-list')
+        return self.request.path
 
 
 class ModelUpdate(ModelBase, UpdateView):
@@ -152,26 +151,96 @@ class ModelUpdate(ModelBase, UpdateView):
         return context
 
 
-@login_required(login_url='/auth')
-def cpuForm(req):
-    cpus = CPU.objects.all()
+class ModelDelete(ModelBase, DeleteView):
 
-    if req.method == 'POST':
-        cpu, created = CPU.objects.get_or_create(
-            name=req.POST.get('manufacturer').lower().strip())
-        typee = req.POST.get('type').lower().strip()
+    def get_success_url(self):
+        return reverse('model-list')
 
-        try:
-            CPUType.objects.create(
-                name=cpu,
-                cpu_type=typee,
-            )
-            # return redirect('home')
-        except:
-            messages.error(req, 'This cpu type is already exists')
 
-    context = {'cpus': cpus}
-    return render(req, 'forms/cpu.html', context)
+class CPUTypeBase(LoginRequiredMixin, View):
+    model = CPUType
+    form_class = CPUTypeForm
+    login_url = "/auth"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context['cpus'] = CPU.objects.all()
+
+        return context
+
+    def form_valid(self, form):
+        cpu = form.save(commit=False)
+
+        manufacturer, created = CPU.objects.get_or_create(
+            name=self.request.POST.get('manufacturer').lower().strip())
+
+        cpu.name = manufacturer
+
+        return super().form_valid(form)
+
+
+class CPUTypes(CPUTypeBase, ListView):
+    template_name = 'items/cpu-list.html'
+
+    def get_queryset(self):
+        qObject = None
+
+        page = self.request.GET.get(
+            'p') if self.request.GET.get('p') != None else '1'
+        filterr = self.request.GET.get('f')
+
+        if filterr:
+            qObject = Q(name__name__contains=filterr)
+        else:
+            qObject = Q(id__isnull=False)
+
+        queryset = CPUType.objects.filter(qObject).order_by('name__name')
+
+        page_obj = Paginator(queryset, 30)
+        page_num = page_obj.page(page)
+
+        return page_num
+
+    def get_context_data(self, **kwargs):
+        context = {
+            'cpus': self.get_queryset(),
+            'filter': self.request.GET.get('f')
+            # 'labels': list(self.get_queryset()[0].keys()),
+            # 'labels': self.get_queryset()._meta.get_fields(),
+        }
+
+        return context
+
+
+class CreateCPUType(CPUTypeBase, CreateView):
+    template_name = 'forms/cpu.html'
+
+    def get_success_url(self):
+        return self.request.path
+
+
+class UpdateCPUType(CPUTypeBase, UpdateView):
+    template_name = 'forms/cpu.html'
+
+    def get_success_url(self):
+        return reverse('cpu-list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        cputype = CPUType.objects.get(id=self.kwargs.get('pk'))
+
+        context['name'] = cputype.name
+
+        return context
+
+
+class DeleteCPUType(CPUTypeBase, DeleteView):
+    template_name = 'forms/cpu.html'
+
+    def get_success_url(self):
+        return reverse('cpu-list')
 
 
 class ItemBase(LoginRequiredMixin, View):
@@ -228,9 +297,10 @@ class Items(ItemBase, ListView):
         else:
             qObject = Q(id__isnull=False)
 
-        queryset = Item.objects.filter(qObject)
+        queryset = Item.objects.filter(qObject).order_by(
+            '-is_available', 'model__name')
 
-        page_obj = Paginator(queryset, 9)
+        page_obj = Paginator(queryset, 20)
         page_num = page_obj.page(page)
 
         return page_num
@@ -245,10 +315,22 @@ class Items(ItemBase, ListView):
 
         return context
 
+    # Toggle Item availabilty Views
+    def post(self, request, pk):
+        item = get_object_or_404(Item, id=pk)
+        item.is_available = not item.is_available
+        item.save()
+
+        return JsonResponse({'success': True})
+
+        # return HttpResponseRedirect(reverse('item-list'))
+
 
 class ItemCreate(ItemBase, CreateView):
     template_name = 'forms/item.html'
-    success_url = '/'
+
+    def get_success_url(self):
+        return self.request.path
 
 
 class ItemUpdate(ItemBase, UpdateView):
@@ -269,6 +351,13 @@ class ItemUpdate(ItemBase, UpdateView):
         context['sound_type'] = item.sound_type
 
         return context
+
+
+class ItemDelete(ItemBase, DeleteView):
+    template_name = 'forms/item.html'
+
+    def get_success_url(self):
+        return reverse('item-list')
 
 # def handler404(request, exception):
 #     return render(request, 'items/404.html', status=404)

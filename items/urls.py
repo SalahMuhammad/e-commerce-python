@@ -12,14 +12,26 @@ urlpatterns = [
     path('models/create', ModelCreate.as_view(), name='create-model'),
     re_path(r'^models/update/(?P<pk>\d{0,4})/$',
             ModelUpdate.as_view(), name='update-model'),
+    re_path(r'^models/delete/(?P<pk>\d{0,4})/$',
+            ModelDelete.as_view(), name='delete-model'),
 
 
     # path('add-model/', Model.as_view(), name='add-model'),
-    path('create-cpu/', cpuForm, name='create-cpu'),
+
+    path('cpus/', CPUTypes.as_view(), name='cpu-list'),
+    path('cpus/create/', CreateCPUType.as_view(), name='create-cpu'),
+    re_path(r'cpus/update/(?P<pk>\d{0,4})/$',
+            UpdateCPUType.as_view(), name='update-cpu'),
+    re_path(r'cpus/delete/(?P<pk>\d{0,4})/$',
+            DeleteCPUType.as_view(), name='delete-cpu'),
 
 
     path('items/', Items.as_view(), name='item-list'),
     path('items/create/', ItemCreate.as_view(), name='create-item'),
     re_path(r'^items/update/(?P<pk>\d{0,4})/$',
-            ItemUpdate.as_view(), name='update-item')
+            ItemUpdate.as_view(), name='update-item'),
+    re_path(r'^items/delete/(?P<pk>\d{0,4})/$',
+            ItemDelete.as_view(), name='delete-item'),
+    re_path(r'^items/(?P<pk>\d{0,4})/$',
+            Items.as_view(), name='toggle-item-availability')
 ]
