@@ -18,14 +18,6 @@ urlpatterns = [
 
     # path('add-model/', Model.as_view(), name='add-model'),
 
-    path('cpus/', CPUTypes.as_view(), name='cpu-list'),
-    path('cpus/create/', CreateCPUType.as_view(), name='create-cpu'),
-    re_path(r'cpus/update/(?P<pk>\d{0,4})/$',
-            UpdateCPUType.as_view(), name='update-cpu'),
-    re_path(r'cpus/delete/(?P<pk>\d{0,4})/$',
-            DeleteCPUType.as_view(), name='delete-cpu'),
-
-
     path('items/', Items.as_view(), name='item-list'),
     path('items/create/', ItemCreate.as_view(), name='create-item'),
     re_path(r'^items/update/(?P<pk>\d{0,4})/$',

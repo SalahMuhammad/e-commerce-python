@@ -1,5 +1,6 @@
 from django.forms import ModelForm
-from .models import Model, Manufacturer, Type, Item, CPUType
+from .models import Models, Items
+from django import forms
 
 
 class ModelForm(ModelForm):
@@ -8,32 +9,21 @@ class ModelForm(ModelForm):
         name_value = self.cleaned_data.get('name')
 
         if name_value:
-            return name_value.lower()
+            return name_value.lower().strip()
 
         return name_value
 
     class Meta:
-        model = Model
-        fields = ['name', 'note']
-
-
-class ManufacturerForm(ModelForm):
-
-    class Meta:
-        model = Manufacturer
-        fields = '__all__'
+        model = Models
+        exclude = ['images']
 
 
 class ItemForm(ModelForm):
+    # just for testing
+    comment = forms.CharField(max_length=20, widget=forms.Textarea)
 
     class Meta:
-        model = Item
-        exclude = ['ram_type', 'hdd_type',
-                   'screen_resolution', 'gpu', 'sound_type']
-
-
-class CPUTypeForm(ModelForm):
-
-    class Meta:
-        model = CPUType
-        fields = ['cpu_type']
+        model = Items
+        # exclude = ['ram_type', 'hdd_type',
+        #            'screen_resolution', 'gpu', 'sound_type']
+        exclude = []

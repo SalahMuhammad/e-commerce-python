@@ -7,126 +7,6 @@
             {% csrf_token %}
 
             {{ form.as_p }}
-            
-            <!-- <div class="mb-3">
-                <label for="i-1" class="form-label">Model</label>
-                <input type="text" class="form-control" name="model" id="i-1" placeholder="Model" list="model">
-                <datalist id="model">
-                    {% for model in models %}
-                        <option value="{{ model }}"/>
-                    {% endfor %}
-                </datalist>
-            </div> -->
-
-            <!-- <div class="mb-3">
-                <label for="i-2" class="form-label">CPU Type</label>
-                <input type="text" class="form-control" name="cpu_type" id="i-2" placeholder="CPU Type" list="cpu_type">
-                <datalist id="cpu_type">
-                    {% for cpu_type in cpu_types %}
-                        <option value="{{ cpu_type }}"/>
-                    {% endfor %}
-                </datalist>
-            </div> -->
-
-            <!-- <div class="mb-3">
-                <label for="i-3" class="form-label">CPU Speed</label>
-                <input type="text" class="form-control" name="cpu_speed" id="i-3" placeholder="CPU Speed">
-            </div> -->
-
-            <div class="mb-3">
-                <label for="i-4" class="form-label">Ram Type</label>
-                <input type="text" class="form-control" name="ram_type" value="{{ ram_type }}" id="ram_type" placeholder="Ram Type" list="ram_type">
-                <datalist id="ram_type">
-                    {% for ram_type in ram_types %}
-                        <option value="{{ ram_type }}"/>
-                    {% endfor %}
-                </datalist>
-            </div>
-
-            <!-- <div class="mb-3">
-                <label for="i-5" class="form-label">Ram Size</label>
-                <input type="text" class="form-control" name="ram_size" id="i-5" placeholder="Ram Size">
-            </div> -->
-
-            <div class="mb-3">
-                <label for="i-6" class="form-label">HDD Type</label>
-                <input type="text" class="form-control" name="hdd_type" value="{{ hdd_type }}" id="hdd_type" placeholder="HDD Type" list="hdd_type">
-                <datalist id="hdd_type">
-                    {% for hdd_type in hdd_types %}
-                        <option value="{{ hdd_type }}"/>
-                    {% endfor %}
-                </datalist>
-            </div>
-
-            <!-- <div class="mb-3">
-                <label for="i-6" class="form-label">HDD Size</label>
-                <input type="text" class="form-control" name="hdd_size" id="i-6" placeholder="HDD Size">
-            </div> -->
-
-            <div class="mb-3">
-                <label for="i-7" class="form-label">GPU Type</label>
-                <input type="text" class="form-control" name="gpu_type" value="{{ gpu_type }}" id="gpu" placeholder="GPU Type" list="gpu_type">
-                <datalist id="gpu_type">
-                    {% for gpu_type in gpu_types %}
-                        <option value="{{ gpu_type }}"/>
-                    {% endfor %}
-                </datalist>
-            </div>
-
-            <div class="mb-3">
-                <label for="i-8" class="form-label">Screen Resolution</label>
-                <input type="text" class="form-control" name="screen_resolution" value="{{ screen_resolution }}" id="screen_resolution" placeholder="Screen Resolution" list="screen_resolution">
-                <datalist id="screen_resolution">
-                    {% for screen_resolution in screen_resolutions %}
-                        <option value="{{ screen_resolution }}"/>
-                    {% endfor %}
-                </datalist>
-            </div>
-
-            <!-- <div class="mb-3">
-                <label for="i-9" class="form-label">Screen Size</label>
-                <input type="text" class="form-control" name="screen_size" id="i-9" placeholder="Screen Size">
-            </div> -->
-
-            <div class="mb-3">
-                <label for="i-10" class="form-label">Sound Type</label>
-                <input type="text" class="form-control" name="sound_type" value="{{ sound_type }}" id="sound_type" placeholder="Sound Type" list="sound_type">
-                <datalist id="sound_type">
-                    {% for sound_type in sound_types %}
-                        <option value="{{ sound_type }}"/>
-                    {% endfor %}
-                </datalist>
-            </div>
-
-            <!-- <div class="mb-3">
-                <label for="i-11" class="form-label">Rotation</label>
-                <input type="text" maxlength="3" class="form-control" name="rotation" id="i-11" placeholder="Rotation">
-            </div> -->
-
-            <!-- <div class="mb-3">
-                <label for="i-15" class="form-label">Price</label>
-                <input type="text" class="form-control" name="price" id="i-15" placeholder="Price">
-            </div>
-
-            <div class="mb-3">
-                <label for="i-16" class="form-label">Discount</label>
-                <input type="text" class="form-control" name="disc" id="i-16" placeholder="Discount">
-            </div> -->
-
-            <!-- <div class="mb-3">
-                <input type="checkbox" class="form-check-input" name="touch_screen" id="i-12" placeholder="Touch Screen">
-                <label for="i-12" class="form-check-label">Touch Screen</label>
-            </div> -->
-
-            <!-- <div class="mb-3">
-                <input type="checkbox" class="form-check-input" name="illuminated_keyboard" id="i-13" placeholder="Illuminated Keyboard">
-                <label for="i-13" class="form-check-label">Illuminated Keyboard</label>
-            </div>
-
-            <div class="mb-3">
-                <input type="checkbox" class="form-check-input" name="original_windows" id="i-14" placeholder="Original Windows">
-                <label for="i-14" class="form-check-label">Original Windows</label>
-            </div> -->
 
             <div class="mb-3">
                 <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-secondary mb-3 container-fluid">Cancel</a>
@@ -138,7 +18,7 @@
     <script>
         window.addEventListener('load', () => {
             form = document.getElementById('item-form')
-            elem = form.querySelector('input[name="cpu_speed"]')
+            elem = form.querySelector('input[name="cpu"]')
 
             elem.addEventListener('paste', (e) => {
                 e.preventDefault();
@@ -146,6 +26,13 @@
                 clipboardData = e.clipboardData.getData('text/plain')
 
                 values = clipboardData.split('\t')
+                values2 = values.slice(3)
+                values2.splice(2, 1)
+                a = values2.splice(1, 2)
+                a = a.join(' @ ') + 'GHz'
+                console.log(a)
+                values2 = [...values2.slice(0, 1), a, ...values2.slice(1)]
+                console.log(values2)
 
                 inputs = form.querySelectorAll('input')
                 selects = form.querySelectorAll('select')

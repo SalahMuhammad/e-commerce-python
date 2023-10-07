@@ -1,8 +1,18 @@
-from django.urls import path, re_path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 from . import views
 
+router = DefaultRouter()
+router.register(r'types', views.TypesView)
+router.register(r'manufacturers', views.ManufacturersView)
+router.register(r'models', views.ModelsView)
+router.register(r'cpus', views.CPUGenerationsView)
+router.register(r'rams', views.RamsView)
+router.register(r'hdds', views.HDDSView)
+router.register(r'screen-resolution', views.ScreenResolutionView)
+router.register(r'sound-types', views.SoundTypesView)
+router.register(r'items', views.ItemsView)
+
 urlpatterns = [
-    re_path(
-        r'^items/(?P<typee>(\d,?){0,30})/(?P<cpu>(\d,?){0,30})/(?P<cpu_type>(\d,?){0,30})/(?P<ram>(\d,?){0,30})/(?P<hdd>(\d,?){0,30})/$', views.Items.as_view()),
-    re_path(r'cputypes/(?P<id>(\d,?){0,30})/$', views.cpuTypes),
+    path(r'', include(router.urls))
 ]

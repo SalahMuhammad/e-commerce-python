@@ -1,97 +1,78 @@
-from items.models import Item, CPUType
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from .serializers import ItemSerializer, CPUTypeSerializer
+from items.models import *
+from .serializers import *
 from django.db.models import Q
 from backend.utility import proccessStrParams
-
-from rest_framework import generics
-
-
-# @api_view(['GET'])
-# def items(req, typee, cpu, cpu_type, ram, hdd, gpu):
-#     type_list, cpu_list, cpu_type_list, ram_list, hdd_list, gpu_list = proccessStrParams(
-#         typee,
-#         cpu,
-#         cpu_type,
-#         ram,
-#         hdd,
-#         gpu
-#     )
-
-#     type_list = Q(model__typee__id__in=type_list) if type_list else Q(
-#         model__typee__id__isnull=False)
-
-#     cpu_list = Q(cpu_type__name__id__in=cpu_list) if cpu_list else Q(
-#         cpu_type__name__id__isnull=False)
-
-#     cpu_type_list = Q(cpu_type__id__in=cpu_type_list) if cpu_type_list else Q(
-#         cpu_type__id__isnull=False)
-
-#     ram_list = Q(ram_type__id__in=ram_list) if ram_list else Q(
-#         ram_type__id__isnull=False)
-
-#     hdd_list = Q(hdd_type__id__in=hdd_list) if hdd_list else Q(
-#         cpu_type__id__isnull=False)
-
-#     gpu_list = Q(gpu__id__in=gpu_list) if gpu_list else Q(
-#         gpu__id__isnull=False)
-
-#     items = Item.objects.filter(
-#         type_list & cpu_list & cpu_type_list & ram_list & hdd_list & gpu_list)
-
-#     serializer = ItemSerializer(items, many=True)
-
-#     return Response(serializer.data)
+# 
+from rest_framework import generics, viewsets, status
+from rest_framework.response import Response
+import excelHandler
 
 
-class Items(generics.ListAPIView):
-    # queryset = Item.objects.all()
+class TypesView(viewsets.ModelViewSet):
+    queryset = Types.objects.all()
+    serializer_class = TypeeSerializer  
+
+
+class ManufacturersView(viewsets.ModelViewSet):
+    queryset = Manufacturers.objects.all()
+    serializer_class = ManufacturerSerializer
+    
+
+class ModelsView(viewsets.ModelViewSet):
+    queryset = Models.objects.all()
+    serializer_class = ModelSerializer
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        model = self.request.query_params.get('model')
+        if model:
+            queryset = queryset.filter(name__icontains=model)
+        return queryset
+    
+ 
+class CPUGenerationsView(viewsets.ModelViewSet):
+    queryset = CPUGenerations.objects.all()
+    serializer_class = CPUGenerationsSerializer
+
+
+class RamsView(viewsets.ModelViewSet):
+    queryset = Rams.objects.all()
+    serializer_class = RamsSerializer
+
+
+class HDDSView(viewsets.ModelViewSet):
+    queryset = HDDs.objects.all()
+    serializer_class = HDDsSerializer
+
+
+class GPUsView(viewsets.ModelViewSet):
+    queryset = GPUs.objects.all()
+    serializer_class = GPUsSerializer
+
+
+class ScreenResolutionView(viewsets.ModelViewSet):
+    queryset = ScreenResolution.objects.all()
+    serializer_class = ScreenResolutionSerializer
+
+
+class SoundTypesView(viewsets.ModelViewSet):
+    queryset = SoundTypes.objects.all()
+    serializer_class = SoundTypesSerializer
+
+
+class ItemsView(viewsets.ModelViewSet):
+    queryset = Items.objects.all()
     serializer_class = ItemSerializer
 
     def get_queryset(self):
-        type_list, cpu_list, cpu_type_list, ram_list, hdd_list = proccessStrParams(
-            self.kwargs['typee'],
-            self.kwargs['cpu'],
-            self.kwargs['cpu_type'],
-            self.kwargs['ram'],
-            self.kwargs['hdd']
-        )
+        queryset = super().get_queryset()
+        q = self.request.query_params
+        model_name = q.get('model-name')
+        model_manufacturer = q.get('model-manufacturer')
 
-        type_list = Q(model__typee__id__in=type_list) if type_list else Q(
-            model__typee__id__isnull=False)
+        a = Q(model__name__icontains=model_name) if model_name is not None else Q(model__id__isnull=False)
 
-        cpu_list = Q(cpu_type__name__id__in=cpu_list) if cpu_list else Q(
-            cpu_type__name__id__isnull=False)
-
-        cpu_type_list = Q(cpu_type__id__in=cpu_type_list) if cpu_type_list else Q(
-            cpu_type__id__isnull=False)
-
-        ram_list = Q(ram_type__id__in=ram_list) if ram_list else Q(
-            ram_type__id__isnull=False)
-
-        hdd_list = Q(hdd_type__id__in=hdd_list) if hdd_list else Q(
-            cpu_type__id__isnull=False)
-
-        is_available = Q(is_available=True)
-
-        queryset = Item.objects.filter(
-            type_list & cpu_list & cpu_type_list & ram_list & hdd_list & is_available)
-
+        if model_name:
+            queryset = queryset.filter(a)
         return queryset
-
-
-@api_view(['GET'])
-def cpuTypes(req, id):
-    listt, = proccessStrParams(id)
-
-    availableCPUGenerations = Item.objects.filter(Q(is_available=True) &
-                                                  Q(cpu_type__name__id__in=listt)).values_list('cpu_type')
-
-    qObject = Q(id__in=[i[0] for i in availableCPUGenerations])
-
-    cpuTypes = CPUType.objects.filter(qObject)
-
-    serializer = CPUTypeSerializer(cpuTypes, many=True)
-
-    return Response(serializer.data)
+    

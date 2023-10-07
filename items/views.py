@@ -6,7 +6,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 from django.db.models import Q
 
-from .forms import ModelForm, ItemForm, CPUTypeForm
+from .forms import ModelForm, ItemForm
 
 from .models import *
 
@@ -23,18 +23,18 @@ from django.core.paginator import Paginator
 
 # @permission_required('items.add_group', login_url="/auth")
 def items(req):
-    ram_types = RamType.objects.all()
-    hdd_types = HDDType.objects.all()
-    cpus = CPU.objects.all()
-    types = Type.objects.all()
+    # ram_types = RamType.objects.all()
+    # hdd_types = HDDType.objects.all()
+    # cpus = CPU.objects.all()
+    # types = Type.objects.all()
     page = req.GET.get('p') if req.GET.get('p') != None else '1'
     filter = req.GET.get('f').lower().strip(
     ) if req.GET.get('f') != None else None
 
-    items = Item.objects.filter(is_available=True)
+    items = Items.objects.filter(is_available=True)
 
     if filter:
-        items = Item.objects.filter((Q(model__name__contains=filter.strip()) | Q(
+        items = Items.objects.filter((Q(model__name__contains=filter.strip()) | Q(
             gpu__name__contains=filter.strip())) & Q(is_available=True))
 
     page_obj = Paginator(items, 12)
@@ -43,13 +43,12 @@ def items(req):
     except:
         page_num = page_obj.page(1)
 
-    context = {'page_num': page_num, 'filter': filter, 'items': page_num, 'ram_types': ram_types,
-               'cpus': cpus, 'hdd_types': hdd_types, 'types': types}
+    context = {'page_num': page_num, 'filter': filter, 'items': page_num}
     return render(req, 'items/home.html', context)
 
 
 def item(req, id):
-    item = Item.objects.get(id=id)
+    item = Items.objects.get(id=id)
 
     # print(item.values())
     context = {'item': item}
@@ -57,40 +56,23 @@ def item(req, id):
 
 
 class ModelBase(LoginRequiredMixin, View):
-    model = Model
+    model = Models
     form_class = ModelForm
-    template_name = 'forms/model2.html'
+    template_name = 'forms/model.html'
     login_url = "/auth"
     # redirect_field_name = "next_page"
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        context['manufacturers'] = Manufacturer.objects.all()
-        context['types'] = Type.objects.all()
-
-        return context
-
     def form_valid(self, form):
-        modell = form.save(commit=False)
-
-        manufacturer, create = Manufacturer.objects.get_or_create(
-            name=self.request.POST.get('manufacturer').lower().strip())
-        typee, create = Type.objects.get_or_create(
-            name=self.request.POST.get('type').lower().strip())
-
-        modell.manufacturer = manufacturer
-        modell.typee = typee
-        modell.save()
+        model = form.save()
 
         images = self.request.FILES.getlist('f')
 
         if images:
-            for image in modell.images.all():
+            for image in model.images.all():
                 image.delete()
 
         for image in images:
-            modell.images.add(
+            model.images.add(
                 Image.objects.create(image=image)
             )
 
@@ -101,18 +83,13 @@ class Models(ModelBase, ListView):
     template_name = 'items/models.html'
 
     def get_queryset(self):
-        qObject = None
-
         filterr = self.request.GET.get('f')
         page = self.request.GET.get(
             'p') if self.request.GET.get('p') != None else '1'
 
-        if filterr:
-            qObject = Q(name__contains=filterr)
-        else:
-            qObject = Q(id__isnull=False)
+        qObject = Q(name__contains=filterr) if filterr else Q(id__isnull=False)
 
-        queryset = Model.objects.filter(qObject)
+        queryset = Models.objects.filter(qObject)
 
         page_obj = Paginator(queryset, 20)
         page_num = page_obj.page(page)
@@ -141,15 +118,6 @@ class ModelUpdate(ModelBase, UpdateView):
     def get_success_url(self):
         return reverse('model-list')
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        context['manufacturer'] = Model.objects.get(
-            id=self.kwargs.get('pk')).manufacturer
-        context['type'] = Model.objects.get(id=self.kwargs.get('pk')).typee
-
-        return context
-
 
 class ModelDelete(ModelBase, DeleteView):
 
@@ -157,94 +125,8 @@ class ModelDelete(ModelBase, DeleteView):
         return reverse('model-list')
 
 
-class CPUTypeBase(LoginRequiredMixin, View):
-    model = CPUType
-    form_class = CPUTypeForm
-    login_url = "/auth"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        context['cpus'] = CPU.objects.all()
-
-        return context
-
-    def form_valid(self, form):
-        cpu = form.save(commit=False)
-
-        manufacturer, created = CPU.objects.get_or_create(
-            name=self.request.POST.get('manufacturer').lower().strip())
-
-        cpu.name = manufacturer
-
-        return super().form_valid(form)
-
-
-class CPUTypes(CPUTypeBase, ListView):
-    template_name = 'items/cpu-list.html'
-
-    def get_queryset(self):
-        qObject = None
-
-        page = self.request.GET.get(
-            'p') if self.request.GET.get('p') != None else '1'
-        filterr = self.request.GET.get('f')
-
-        if filterr:
-            qObject = Q(name__name__contains=filterr)
-        else:
-            qObject = Q(id__isnull=False)
-
-        queryset = CPUType.objects.filter(qObject).order_by('name__name')
-
-        page_obj = Paginator(queryset, 30)
-        page_num = page_obj.page(page)
-
-        return page_num
-
-    def get_context_data(self, **kwargs):
-        context = {
-            'cpus': self.get_queryset(),
-            'filter': self.request.GET.get('f')
-            # 'labels': list(self.get_queryset()[0].keys()),
-            # 'labels': self.get_queryset()._meta.get_fields(),
-        }
-
-        return context
-
-
-class CreateCPUType(CPUTypeBase, CreateView):
-    template_name = 'forms/cpu.html'
-
-    def get_success_url(self):
-        return self.request.path
-
-
-class UpdateCPUType(CPUTypeBase, UpdateView):
-    template_name = 'forms/cpu.html'
-
-    def get_success_url(self):
-        return reverse('cpu-list')
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        cputype = CPUType.objects.get(id=self.kwargs.get('pk'))
-
-        context['name'] = cputype.name
-
-        return context
-
-
-class DeleteCPUType(CPUTypeBase, DeleteView):
-    template_name = 'forms/cpu.html'
-
-    def get_success_url(self):
-        return reverse('cpu-list')
-
-
 class ItemBase(LoginRequiredMixin, View):
-    model = Item
+    model = Items
     form_class = ItemForm
     login_url = "/auth"
 
@@ -270,17 +152,6 @@ class ItemBase(LoginRequiredMixin, View):
 
         return super().form_valid(form)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        context['gpu_types'] = GPUType.objects.all()
-        context['ram_types'] = RamType.objects.all()
-        context['hdd_types'] = HDDType.objects.all()
-        context['screen_resolutions'] = ScreenResolution.objects.all()
-        context['sound_types'] = SoundType.objects.all()
-
-        return context
-
 
 class Items(ItemBase, ListView):
     template_name = 'items/items-list.html'
@@ -297,7 +168,7 @@ class Items(ItemBase, ListView):
         else:
             qObject = Q(id__isnull=False)
 
-        queryset = Item.objects.filter(qObject).order_by(
+        queryset = Items.objects.filter(qObject).order_by(
             '-is_available', 'model__name')
 
         page_obj = Paginator(queryset, 20)
@@ -342,7 +213,7 @@ class ItemUpdate(ItemBase, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        item = Item.objects.get(id=self.kwargs.get('pk'))
+        item = Items.objects.get(id=self.kwargs.get('pk'))
 
         context['gpu_type'] = item.gpu
         context['ram_type'] = item.ram_type

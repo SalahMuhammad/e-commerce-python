@@ -35,14 +35,5 @@ from .models import *
 #     list_display = ('id', 'name', 'manufacturer', 'typee', 'cpu_type', 'ram_type')
 
 
-admin.site.register(Manufacturer)
-admin.site.register(Type)
-admin.site.register(Model)
-admin.site.register(CPU)
-admin.site.register(CPUType)
-admin.site.register(RamType)
-admin.site.register(Item)
-admin.site.register(HDDType)
-admin.site.register(GPUType)
-admin.site.register(ScreenResolution)
-admin.site.register(SoundType)
+# admin.site.register(Models)
+admin.site.register(Items)
