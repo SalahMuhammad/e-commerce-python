@@ -9,12 +9,12 @@ import excelHandler
 
 
 class TypesView(viewsets.ModelViewSet):
-    queryset = Types.objects.all()
+    queryset = Type.objects.all()
     serializer_class = TypeeSerializer  
 
 
 class ManufacturersView(viewsets.ModelViewSet):
-    queryset = Manufacturers.objects.all()
+    queryset = Manufacturer.objects.all()
     serializer_class = ManufacturerSerializer
     
 
@@ -31,22 +31,22 @@ class ModelsView(viewsets.ModelViewSet):
     
  
 class CPUGenerationsView(viewsets.ModelViewSet):
-    queryset = CPUGenerations.objects.all()
+    queryset = CPUGeneration.objects.all()
     serializer_class = CPUGenerationsSerializer
 
 
 class RamsView(viewsets.ModelViewSet):
-    queryset = Rams.objects.all()
+    queryset = Ram.objects.all()
     serializer_class = RamsSerializer
 
 
 class HDDSView(viewsets.ModelViewSet):
-    queryset = HDDs.objects.all()
+    queryset = HDD.objects.all()
     serializer_class = HDDsSerializer
 
 
 class GPUsView(viewsets.ModelViewSet):
-    queryset = GPUs.objects.all()
+    queryset = GPU.objects.all()
     serializer_class = GPUsSerializer
 
 
@@ -56,7 +56,7 @@ class ScreenResolutionView(viewsets.ModelViewSet):
 
 
 class SoundTypesView(viewsets.ModelViewSet):
-    queryset = SoundTypes.objects.all()
+    queryset = SoundType.objects.all()
     serializer_class = SoundTypesSerializer
 
 

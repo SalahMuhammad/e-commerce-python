@@ -6,7 +6,7 @@ class TypeeSerializer(serializers.ModelSerializer):
 
 
     class Meta:
-        model = Types
+        model = Type
         fields = '__all__'
 
 
@@ -14,7 +14,7 @@ class ManufacturerSerializer(serializers.ModelSerializer):
 
 
     class Meta:
-        model = Manufacturers
+        model = Manufacturer
         fields = '__all__'
 
 
@@ -30,32 +30,32 @@ class CPUGenerationsSerializer(serializers.ModelSerializer):
     cpu = serializers.SerializerMethodField()
 
     def get_cpu(self, obj):
-        return obj.cpu.name + '-' + obj.generation
+        return obj.cpu.type + '-' + obj.generation
 
 
     class Meta:
-        model = CPUGenerations
+        model = CPUGeneration
         fields = ['id', 'cpu']
 
 
 class RamsSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Rams
+        model = Ram
         fields = '__all__'
 
 
 class HDDsSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = HDDs
+        model = HDD
         fields = '__all__'
 
 
 class GPUsSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = GPUs
+        model = GPU
         fields = '__all__'
 
 
@@ -69,7 +69,7 @@ class ScreenResolutionSerializer(serializers.ModelSerializer):
 class SoundTypesSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = SoundTypes
+        model = SoundType
         fields = '__all__'
 
 
@@ -77,7 +77,7 @@ class ItemSerializer(serializers.ModelSerializer):
     ggg = serializers.SerializerMethodField()
 
     def get_ggg(self, obj):
-        return obj.model.manufacturer.name + '-' + obj.model.name
+        return obj.model.manufacturer.type + '-' + obj.model.name
     
 
     class Meta:
