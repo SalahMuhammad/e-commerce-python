@@ -116,7 +116,7 @@ class SoundType(CommonTypes):
     pass
 
 
-class Items(models.Model):
+class Items(models.Model):s
     model = models.ForeignKey(
         Models, related_name='items', on_delete=models.PROTECT)
     cpu = models.ForeignKey(CPUGeneration, 
