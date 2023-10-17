@@ -63,7 +63,6 @@ def proccess_workbook(filename, sheetname):
                        item['illuminated_keyboard'], item['original_windows'], item['screen_resolution'], 
                        item['screen_size'], item['sound_type'], item['السعر'], item['خصم'], item['note'], True)
 
-    print(items)
     return models, cpus, rams, hdds, items, list_items
 
 
@@ -73,42 +72,42 @@ from items.models import *
 
 
 
-# models, cpus, rams, hdds, items, list_items = proccess_workbook('op.xlsx', 'الشيت القديم')
+models, cpus, rams, hdds, items, list_items = proccess_workbook('op.xlsx', 'الشيت القديم')
 
-## generate items
+# generate items
 # for i in list_items:
 #     # models
-#     typee, created = Types.objects.get_or_create(name='labtop')
-#     manufacturer, created = Manufacturers.objects.get_or_create(name=i['manufacturer'])
-#     model, created = Models.objects.get_or_create(typee=typee, manufacturer=manufacturer, name=i['model'])
+#     typee, created = Type.objects.get_or_create(type='labtop')
+#     manufacturer, created = Manufacturer.objects.get_or_create(type=i['manufacturer'])
+#     model, created = Models.objects.get_or_create(type=typee, manufacturer=manufacturer, name=i['model'])
 
 #     # cpus
 #     cpu = None
 #     gen = None
 #     if i['cpu'].__contains__('intel'):
 #         val = i['cpu'].split('-')
-#         cpu, created = CPUs.objects.get_or_create(name=val[0])
-#         gen, created = CPUGenerations.objects.get_or_create(cpu=cpu, generation=val[1])
+#         cpu, created = CPU.objects.get_or_create(type=val[0])
+#         gen, created = CPUGeneration.objects.get_or_create(cpu=cpu, generation=val[1])
 #     else:
 #         val = i['cpu'].split(' ')
 #         if val[0] != 'none':
-#             cpu, created = CPUs.objects.get_or_create(name=val[0])
-#             gen, created = CPUGenerations.objects.get_or_create(cpu=cpu, generation=' '.join(val[1:]))
+#             cpu, created = CPU.objects.get_or_create(type=val[0])
+#             gen, created = CPUGeneration.objects.get_or_create(cpu=cpu, generation=' '.join(val[1:]))
 
-#     # rams
+#     # # rams
 #     if i['ram-type'] != 'none':
-#         ram, created = Rams.objects.get_or_create(type=i['ram-type'], size=i['ram'])
+#         ram, created = Ram.objects.get_or_create(type=i['ram-type'], size=i['ram'])
 
-#     # hdds
+#     # # hdds
 #     hdd = None
 #     if i['hdd1_type'] != 'none':
-#         hdd, created = HDDs.objects.get_or_create(type=i['hdd1_type'], size=i['hdd'])
+#         hdd, created = HDD.objects.get_or_create(type=i['hdd1_type'], size=i['hdd'])
 
-#     resolution_type, created = ScreenResolution.objects.get_or_create(resolution_type=i['screen_resolution'])
-#     sound_type, created = SoundTypes.objects.get_or_create(sound_type=i['sound_type'])
+#     resolution_type, created = ScreenResolution.objects.get_or_create(type=i['screen_resolution'])
+#     sound_type, created = SoundType.objects.get_or_create(type=i['sound_type'])
 
     
-#     gpu, created = GPUs.objects.get_or_create(gpu_type=i['gpu'])
+#     gpu, created = GPU.objects.get_or_create(type=i['gpu'])
 
 #     try:
 #         item, created = Items.objects.get_or_create(model=model, cpu=gen, 

@@ -13,7 +13,7 @@ from .models import *
 from django.urls import reverse
 
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from django.views.generic.list import ListView
+from django.views.generic.list import ListView 
 
 from django.contrib.auth.decorators import login_required
 # from django.utils.decorators import method_decorator
