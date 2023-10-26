@@ -1,78 +1,56 @@
-from items.models import *
+from items.models import Type, Manufacturer, Items
 from .serializers import *
 from django.db.models import Q
-from backend.utility import proccessStrParams
 # 
 from rest_framework import generics, viewsets, status
 from rest_framework.response import Response
-import excelHandler
+from rest_framework.views import APIView
 
 
-class TypesView(viewsets.ModelViewSet):
+class TypeView(viewsets.ModelViewSet):
     queryset = Type.objects.all()
-    serializer_class = TypeeSerializer  
+    serializer_class = TypeSerializer
 
-
-class ManufacturersView(viewsets.ModelViewSet):
+class ManufacturerView(viewsets.ModelViewSet):
     queryset = Manufacturer.objects.all()
     serializer_class = ManufacturerSerializer
-    
-
-class ModelsView(viewsets.ModelViewSet):
-    queryset = Models.objects.all()
-    serializer_class = ModelSerializer
-
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        model = self.request.query_params.get('model')
-        if model:
-            queryset = queryset.filter(name__icontains=model)
-        return queryset
-    
- 
-class CPUGenerationsView(viewsets.ModelViewSet):
-    queryset = CPUGeneration.objects.all()
-    serializer_class = CPUGenerationsSerializer
 
 
-class RamsView(viewsets.ModelViewSet):
-    queryset = Ram.objects.all()
-    serializer_class = RamsSerializer
-
-
-class HDDSView(viewsets.ModelViewSet):
-    queryset = HDD.objects.all()
-    serializer_class = HDDsSerializer
-
-
-class GPUsView(viewsets.ModelViewSet):
-    queryset = GPU.objects.all()
-    serializer_class = GPUsSerializer
-
-
-class ScreenResolutionView(viewsets.ModelViewSet):
-    queryset = ScreenResolution.objects.all()
-    serializer_class = ScreenResolutionSerializer
-
-
-class SoundTypesView(viewsets.ModelViewSet):
-    queryset = SoundType.objects.all()
-    serializer_class = SoundTypesSerializer
-
-
-class ItemsView(viewsets.ModelViewSet):
+class ItemsView(generics.ListCreateAPIView):
     queryset = Items.objects.all()
-    serializer_class = ItemSerializer
+    serializer_class = ItemsSerializer
 
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        q = self.request.query_params
-        model_name = q.get('model-name')
-        model_manufacturer = q.get('model-manufacturer')
-
-        a = Q(model__name__icontains=model_name) if model_name is not None else Q(model__id__isnull=False)
-
-        if model_name:
-            queryset = queryset.filter(a)
-        return queryset
     
+    def post(self, request):
+        request.data['about'] = 'hello world'
+        print(request.data.get('about'))
+        super().post(request)
+    # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    # def perform_create(self, serializer):
+    #     serializer.save(owner=self.request.user)
+
+
+class test(APIView):
+    def get(self, request, format=None):
+        snippets = Items.objects.all()
+        serializer = ItemsSerializer(snippets, many=True)
+        return Response(serializer.data)
+        
+
+    def post(self, request):
+        # about = request.data.get('about')
+        # request.data['about'] = 'fdssssssss'
+        # print(request.data.get('about'))
+        # request.data['specifications'][0] = 'fdsfdas'
+        print(request.data)
+        serializer = ItemsSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+def a(request):
+    raise TypeError("You tried to pass in the %s method name as a "
+                                "keyword argument to %s(). Don't do that.")
