@@ -1,0 +1,76 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <!-- <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/babel-standalone@6/babel.js"></script> -->
+
+</head>
+<body>
+    <button>add</button>
+    <form method="POST" action="http://localhost:8000/api/a/" class="form">
+        {% csrf_token %}
+        <div>
+            <label for="">Manufacturer</label>
+            <input type="text" name="manufacturer">
+        </div>
+        <div>
+            <label for="">Type</label>
+            <input type="text" name="type">
+        </div>
+        <div>
+            <label for="">About</label>
+            <input type="text" name="about">
+        </div>
+        <div>
+            <label for="">Key</label>
+            <input type="text" name="key">
+            <label for="">value</label>
+            <input type="text" name="value">
+        </div>
+        <div>
+            <label for="">Name</label>
+            <input type="text" name="name">
+        </div>
+        <div>
+            <label for="">Specifications</label>
+            <input type="text" name="specifications">
+        </div>
+        <input type="submit" value="submit">
+    </form>
+
+    <!-- <script src="{% static 'js/test/test.js' %}"></script> -->
+
+    <script>
+        btn = document.querySelector('button')
+        form = document.querySelector('form')
+
+        btn.onclick = () => {
+            div = document.createElement('div')
+            keyLabel =  document.createElement('label')
+            valueLabel = document.createElement('label')
+            keyInput = document.createElement('input')
+            valueInput = document.createElement('input')
+
+            keyLabel.innerText = 'key'
+            keyInput.name = 'key'
+            valueLabel.innerText = 'value'
+            valueInput.name = 'value'
+
+            div.appendChild(keyLabel)
+            div.appendChild(keyInput)
+            div.appendChild(valueLabel)
+            div.appendChild(valueInput)
+
+            form.appendChild(div)
+        }
+    </script>
+
+</body>
+</html>
