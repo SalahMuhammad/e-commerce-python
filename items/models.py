@@ -24,7 +24,7 @@ class Items(models.Model):
     type = models.ForeignKey(Type, on_delete=models.PROTECT, related_name='itemss')
     manufacturer = models.ForeignKey(Manufacturer, on_delete=models.PROTECT, related_name='itemss')
     name = models.CharField(unique=True, max_length=50)
-    specifications = models.TextField()
+    specifications = models.TextField(blank=True)
     about = models.TextField()
     images = models.ManyToManyField('ItemImages', related_name='itemss', blank=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -34,7 +34,7 @@ class Items(models.Model):
         return self.manufacturer.type + ' ' + self.name
 
     class Meta:
-        ordering = ['type', 'manufacturer', 'name']
+        ordering = ['type', 'manufacturer', '-updated', 'name']
 
 
 class ItemImages(models.Model):

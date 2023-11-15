@@ -16,6 +16,7 @@
     <button>add</button>
     <form method="POST" action="http://localhost:8000/api/a/" class="form">
         {% csrf_token %}
+        <!-- <input type="hidden" name="_method" value="put"> -->
         <div>
             <label for="">Manufacturer</label>
             <input type="text" name="manufacturer">
@@ -30,17 +31,13 @@
         </div>
         <div>
             <label for="">Key</label>
-            <input type="text" name="key">
+            <input type="text" name="s-keys">
             <label for="">value</label>
-            <input type="text" name="value">
+            <input type="text" name="s-values">
         </div>
         <div>
             <label for="">Name</label>
             <input type="text" name="name">
-        </div>
-        <div>
-            <label for="">Specifications</label>
-            <input type="text" name="specifications">
         </div>
         <input type="submit" value="submit">
     </form>
@@ -59,9 +56,9 @@
             valueInput = document.createElement('input')
 
             keyLabel.innerText = 'key'
-            keyInput.name = 'key'
+            keyInput.name = 's-keys'
             valueLabel.innerText = 'value'
-            valueInput.name = 'value'
+            valueInput.name = 's-values'
 
             div.appendChild(keyLabel)
             div.appendChild(keyInput)

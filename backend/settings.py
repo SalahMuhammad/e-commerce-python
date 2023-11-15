@@ -61,6 +61,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # my input
+    # 'api.middleware.CustomMiddleware'
     # 'corsheaders.middleware.CorsMiddleware',
 ]
 
